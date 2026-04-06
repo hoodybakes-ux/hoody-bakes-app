@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hoody Bakes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Montserrat', sans-serif; background: #F0EDE8; color: #1C1C1A; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; min-height: 100vh; }
+
+    .app-header { background: #1C1C1A; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .app-logo { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #F0EDE8; font-weight: 600; }
+    .app-logo span { color: #4A9EA6; }
+    .plan-badge { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #6a6560; border: 1px solid #2a2a27; padding: 4px 10px; border-radius: 50px; }
+
+    .tab-bar { background: #F0EDE8; border-bottom: 1px solid #d6d0c8; display: flex; flex-shrink: 0; }
+    .tab { flex: 1; padding: 12px 4px; text-align: center; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #9a9590; border-bottom: 2px solid transparent; cursor: pointer; }
+    .tab.active { color: #4A9EA6; border-bottom-color: #4A9EA6; }
+
+    .content { flex: 1; overflow-y: auto; padding: 1.5rem; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #4A9EA6; margin-bottom: 0.4rem; }
+    .screen-heading { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: #1C1C1A; margin-bottom: 1.25rem; line-height: 1.1; }
+
+    .upgrade-banner { background: rgba(74,158,166,0.1); border: 1px solid rgba(74,158,166,0.25); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .upgrade-banner p { font-size: 12px; color: #4A9EA6; font-weight: 300; line-height: 1.5; }
+    .upgrade-btn { background: #4A9EA6; color: #F0EDE8; border: none; padding: 8px 16px; border-radius: 50px; font-size: 11px; font-weight: 400; cursor: pointer; white-space: nowrap; font-family: 'Montserrat', sans-serif; letter-spacing: 0.06em; flex-shrink: 0; }
+
+    .recipe-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1rem; }
+    .recipe-card { background: #fff; border: 1px solid #ddd8d0; border-radius: 14px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .recipe-card:hover { border-color: #4A9EA6; }
+    .recipe-card.empty-slot { border-style: dashed; background: #fafaf8; cursor: default; }
+    .recipe-card.locked { opacity: 0.5; cursor: pointer; border-style: dashed; background: #fafaf8; }
+    .recipe-name { font-size: 15px; font-weight: 500; color: #1C1C1A; margin-bottom: 3px; }
+    .recipe-meta { font-size: 11px; color: #9a9590; font-weight: 300; }
+    .recipe-hydration { background: #e8f4f5; color: #4A9EA6; font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 50px; flex-shrink: 0; }
+    .empty-slot-text { font-size: 13px; color: #c8c3bc; }
+
+    .btn-primary { width: 100%; background: #4A9EA6; color: #F0EDE8; border: none; padding: 14px; border-radius: 50px; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+    .btn-primary:hover { background: #3a8e96; }
+    .btn-secondary { width: 100%; background: transparent; color: #1C1C1A; border: 1px solid #d6d0c8; padding: 13px; border-radius: 50px; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
+    .btn-danger { width: 100%; background: transparent; color: #c0392b; border: 1px solid #f5c6c2; padding: 13px; border-radius: 50px; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
+    .btn-back { background: transparent; border: none; color: #4A9EA6; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; padding: 0; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 6px; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #9a9590; margin-bottom: 6px; display: block; }
+    .form-input { width: 100%; padding: 12px 14px; border: 1px solid #d6d0c8; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 14px; color: #1C1C1A; background: #fff; outline: none; }
+    .form-input:focus { border-color: #4A9EA6; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-textarea { width: 100%; padding: 12px 14px; border: 1px solid #d6d0c8; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 13px; color: #1C1C1A; background: #fff; outline: none; resize: none; min-height: 80px; }
+    .form-textarea:focus { border-color: #4A9EA6; }
+
+    .inclusions-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    .inclusion-row { display: flex; gap: 8px; align-items: center; }
+    .inclusion-name { flex: 1; }
+    .inclusion-qty { width: 80px; }
+    .remove-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #f5c6c2; background: transparent; color: #c0392b; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
+    .add-inclusion-btn { background: transparent; border: 1px dashed #d6d0c8; color: #9a9590; padding: 8px 16px; border-radius: 50px; font-size: 12px; font-family: 'Montserrat', sans-serif; cursor: pointer; width: 100%; }
+
+    .recipe-detail-header { background: #1C1C1A; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; }
+    .recipe-detail-name { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: #F0EDE8; font-weight: 600; margin-bottom: 0.5rem; }
+    .recipe-detail-hyd { font-size: 48px; font-family: 'Cormorant Garamond', serif; color: #4A9EA6; font-weight: 600; line-height: 1; }
+    .recipe-detail-hyd-lbl { font-size: 10px; color: #6a6560; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 2px; }
+
+    .section-divider { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #4A9EA6; margin: 1.25rem 0 0.75rem; padding-bottom: 6px; border-bottom: 1px solid #d6d0c8; }
+
+    .ingredient-row { background: #fff; border: 1px solid #ddd8d0; border-radius: 12px; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .ingredient-name { font-size: 13px; color: #5a554f; }
+    .ingredient-val { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #1C1C1A; font-weight: 600; }
+
+    .journal-entry { background: #fff; border: 1px solid #ddd8d0; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 8px; }
+    .journal-entry-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .journal-entry-date { font-size: 10px; color: #9a9590; text-transform: uppercase; letter-spacing: 0.08em; }
+    .journal-entry-result { font-size: 10px; color: #4A9EA6; background: #e8f4f5; padding: 2px 8px; border-radius: 50px; }
+    .journal-entry-note { font-size: 12px; color: #7a7570; line-height: 1.65; font-weight: 300; }
+    .journal-entry-loaves { font-size: 11px; color: #9a9590; margin-top: 4px; }
+    .journal-empty { font-size: 12px; color: #c8c3bc; font-weight: 300; padding: 0.75rem 0; }
+
+    .calc-card { background: #fff; border: 1px solid #ddd8d0; border-radius: 16px; padding: 1.25rem; margin-bottom: 14px; }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .calc-field label { font-size: 10px; color: #9a9590; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 4px; font-weight: 500; }
+    .calc-input { width: 100%; padding: 10px 12px; border: 1px solid #d6d0c8; border-radius: 8px; background: #F0EDE8; color: #1C1C1A; font-family: 'Montserrat', sans-serif; font-size: 14px; outline: none; }
+    .calc-input:focus { border-color: #4A9EA6; background: #fff; }
+    .calc-result { text-align: center; padding: 1rem 0; border-top: 1px solid #e8e4de; }
+    .calc-pct { font-family: 'Cormorant Garamond', serif; font-size: 64px; color: #4A9EA6; font-weight: 600; line-height: 1; }
+    .calc-lbl { font-size: 10px; color: #9a9590; text-transform: uppercase; letter-spacing: 0.14em; margin-top: 4px; }
+    .calc-stats { display: flex; gap: 8px; margin-top: 12px; }
+    .calc-stat { flex: 1; background: #F0EDE8; border: 1px solid #e8e4de; border-radius: 8px; padding: 8px 10px; text-align: center; }
+    .calc-stat-val { font-size: 14px; font-weight: 500; color: #1C1C1A; }
+    .calc-stat-lbl { font-size: 9px; color: #9a9590; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+    .presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+    .preset-label { font-size: 10px; color: #9a9590; text-transform: uppercase; letter-spacing: 0.1em; }
+    .preset-btn { background: #fff; border: 1px solid #ddd8d0; border-radius: 50px; padding: 6px 14px; font-size: 11px; font-family: 'Montserrat', sans-serif; cursor: pointer; color: #1C1C1A; }
+    .preset-btn:hover { border-color: #4A9EA6; color: #4A9EA6; }
+
+    .scale-recipe-select { width: 100%; padding: 12px 14px; border: 1px solid #d6d0c8; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 14px; color: #1C1C1A; background: #fff; outline: none; margin-bottom: 1.25rem; }
+    .loaf-counter { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #ddd8d0; border-radius: 50px; padding: 8px 8px 8px 20px; margin-bottom: 1.25rem; }
+    .loaf-label { font-size: 13px; color: #5a554f; }
+    .loaf-controls { display: flex; align-items: center; gap: 16px; }
+    .loaf-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #d6d0c8; background: #F0EDE8; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #4A9EA6; line-height: 1; }
+    .loaf-val { font-size: 20px; font-weight: 500; color: #1C1C1A; min-width: 24px; text-align: center; }
+    .scale-results { display: flex; flex-direction: column; gap: 8px; }
+    .scale-row-item { background: #fff; border: 1px solid #ddd8d0; border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .scale-row-name { font-size: 13px; color: #5a554f; }
+    .scale-row-val { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #1C1C1A; font-weight: 600; }
+    .scale-empty { text-align: center; padding: 2rem; color: #9a9590; font-size: 13px; font-weight: 300; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(14,12,10,0.6); z-index: 50; align-items: flex-end; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #F0EDE8; border-radius: 24px 24px 0 0; padding: 1.5rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: #1C1C1A; }
+    .modal-close { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #d6d0c8; background: transparent; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #9a9590; line-height: 1; }
+
+    .upgrade-modal .modal { background: #1C1C1A; }
+    .upgrade-modal .modal-title { color: #F0EDE8; }
+    .upgrade-modal .modal-close { border-color: #2a2a27; color: #6a6560; }
+    .upgrade-features { list-style: none; padding: 0; margin: 1rem 0 1.5rem; }
+    .upgrade-features li { font-size: 14px; color: #c8c3bc; padding: 8px 0; border-bottom: 1px solid #2a2a27; display: flex; gap: 10px; font-weight: 300; align-items: flex-start; }
+    .upgrade-features li::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4A9EA6; flex-shrink: 0; margin-top: 5px; }
+    .upgrade-price { text-align: center; margin-bottom: 1.5rem; }
+    .upgrade-amount { font-family: 'Cormorant Garamond', serif; font-size: 52px; color: #F0EDE8; font-weight: 600; line-height: 1; }
+    .upgrade-currency { font-size: 20px; color: #4A9EA6; vertical-align: super; }
+    .upgrade-period { font-size: 12px; color: #6a6560; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+    .upgrade-note { font-size: 11px; color: #6a6560; text-align: center; margin-top: 10px; font-weight: 300; }
+
+    footer { background: #1C1C1A; padding: 1.5rem; text-align: center; flex-shrink: 0; }
+    footer img { height: 40px; width: auto; margin: 0 auto 0.5rem; display: block; }
+    footer p { font-size: 11px; color: #444441; letter-spacing: 0.07em; font-weight: 300; }
+  </style>
+<meta name="google-site-verification" content="xOMH0mPVeotZcw0IPQF_0vICBhEPELJO4LquZJorqxg" />
+</head>
+<body>
+
+  <div class="app-header">
+    <div class="app-logo">Hoody <span>Bakes</span></div>
+    <div class="plan-badge" id="planBadge">Free plan</div>
+  </div>
+
+  <div class="tab-bar" id="tabBar">
+    <div class="tab active" data-tab="recipes">Recipes</div>
+    <div class="tab" data-tab="calculator">Calculator</div>
+    <div class="tab" data-tab="scale">Scale</div>
+  </div>
+
+  <div class="content">
+
+    <div class="screen active" id="screen-recipes">
+      <div class="eyebrow">My recipes</div>
+      <div class="screen-heading">Recipe Manager</div>
+      <div class="upgrade-banner" id="upgradeBanner">
+        <p id="upgradeBannerText">You're on the free plan — 0 of 3 recipe slots used.</p>
+        <button class="upgrade-btn" id="upgradeBtn">Upgrade</button>
+      </div>
+      <div class="recipe-list" id="recipeList"></div>
+      <button class="btn-primary" id="addRecipeBtn">+ Add new recipe</button>
+    </div>
+
+    <div class="screen" id="screen-recipe-detail">
+      <button class="btn-back" id="backBtn">← Back to recipes</button>
+      <div class="recipe-detail-header">
+        <div class="recipe-detail-name" id="detailName"></div>
+        <div class="recipe-detail-hyd" id="detailHyd"></div>
+        <div class="recipe-detail-hyd-lbl">Overall hydration</div>
+      </div>
+      <div class="section-divider">Ingredients</div>
+      <div id="detailIngredients"></div>
+      <div id="detailInclusionsSection" style="display:none;">
+        <div class="section-divider">Inclusions</div>
+        <div id="detailInclusions"></div>
+      </div>
+      <div id="detailNotesSection" style="display:none;">
+        <div class="section-divider">Notes</div>
+        <p id="detailNotes" style="font-size:13px;color:#7a7570;line-height:1.7;font-weight:300;margin-bottom:1rem;"></p>
+      </div>
+      <div class="section-divider">Bake history</div>
+      <div id="detailJournal"></div>
+      <button class="btn-primary" id="logBakeBtn" style="margin-top:0.5rem;">+ Log a bake</button>
+      <button class="btn-secondary" id="editRecipeBtn">Edit recipe</button>
+      <button class="btn-danger" id="deleteRecipeBtn">Delete recipe</button>
+    </div>
+
+    <div class="screen" id="screen-calculator">
+      <div class="eyebrow">Free tool</div>
+      <div class="screen-heading">Hydration Calculator</div>
+      <div class="presets">
+        <span class="preset-label">Presets:</span>
+        <button class="preset-btn" data-hyd="65">65% Sandwich</button>
+        <button class="preset-btn" data-hyd="70">70% Everyday</button>
+        <button class="preset-btn" data-hyd="75">75% Open crumb</button>
+      </div>
+      <div class="calc-card">
+        <div class="calc-grid">
+          <div class="calc-field"><label>Flour (g)</label><input class="calc-input" type="number" id="cFlour" placeholder="440" /></div>
+          <div class="calc-field"><label>Water (g)</label><input class="calc-input" type="number" id="cWater" placeholder="290" /></div>
+          <div class="calc-field"><label>Starter (g)</label><input class="calc-input" type="number" id="cStarter" placeholder="125" /></div>
+          <div class="calc-field"><label>Starter hydration %</label><input class="calc-input" type="number" id="cStarterHyd" placeholder="100" /></div>
+          <div class="calc-field"><label>Salt (g)</label><input class="calc-input" type="number" id="cSalt" placeholder="12" /></div>
+        </div>
+        <div class="calc-result">
+          <div class="calc-pct" id="calcPct">–</div>
+          <div class="calc-lbl">Overall hydration</div>
+        </div>
+        <div class="calc-stats">
+          <div class="calc-stat"><div class="calc-stat-val" id="calcTotalFlour">– g</div><div class="calc-stat-lbl">Total flour</div></div>
+          <div class="calc-stat"><div class="calc-stat-val" id="calcTotalWater">– g</div><div class="calc-stat-lbl">Total water</div></div>
+          <div class="calc-stat"><div class="calc-stat-val" id="calcDoughWeight">– g</div><div class="calc-stat-lbl">Dough weight</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-scale">
+      <div class="eyebrow">Batch scaling</div>
+      <div class="screen-heading">Scale a Recipe</div>
+      <select class="scale-recipe-select" id="scaleSelect"><option value="">— Select a recipe —</option></select>
+      <div class="loaf-counter">
+        <div class="loaf-label">Number of loaves</div>
+        <div class="loaf-controls">
+          <button class="loaf-btn" id="loafMinus">−</button>
+          <div class="loaf-val" id="loafCount">1</div>
+          <button class="loaf-btn" id="loafPlus">+</button>
+        </div>
+      </div>
+      <div class="scale-results" id="scaleResults"><div class="scale-empty">Select a recipe above to scale it up</div></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <img src="logo.png" alt="Hoody's Sourdough Kitchen" />
+    <p>&copy; 2026 Hoody Bakes &middot; All rights reserved</p>
+  </footer>
+
+  <!-- RECIPE MODAL -->
+  <div class="modal-overlay" id="recipeModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="recipeModalTitle">New recipe</div>
+        <button class="modal-close" id="closeRecipeModal">×</button>
+      </div>
+      <div class="form-group"><label class="form-label">Recipe name</label><input class="form-input" type="text" id="rName" placeholder="e.g. Country Sourdough" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Flour (g)</label><input class="form-input" type="number" id="rFlour" placeholder="500" /></div>
+        <div class="form-group"><label class="form-label">Water (g)</label><input class="form-input" type="number" id="rWater" placeholder="375" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Starter (g)</label><input class="form-input" type="number" id="rStarter" placeholder="100" /></div>
+        <div class="form-group"><label class="form-label">Starter hydration %</label><input class="form-input" type="number" id="rStarterHyd" placeholder="100" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Salt (g)</label><input class="form-input" type="number" id="rSalt" placeholder="10" /></div>
+      <div class="form-group">
+        <label class="form-label">Inclusions (optional)</label>
+        <div class="inclusions-list" id="inclusionsList"></div>
+        <button class="add-inclusion-btn" id="addInclusionBtn">+ Add inclusion</button>
+      </div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="rNotes" placeholder="Any notes about this recipe..."></textarea></div>
+      <button class="btn-primary" id="saveRecipeBtn">Save recipe</button>
+      <button class="btn-secondary" id="closeRecipeModalBottom">Cancel</button>
+    </div>
+  </div>
+
+  <!-- LOG BAKE MODAL -->
+  <div class="modal-overlay" id="journalModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Log a bake</div>
+        <button class="modal-close" id="closeJournalModal">×</button>
+      </div>
+      <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="jDate" /></div>
+      <div class="form-group"><label class="form-label">How did it go?</label><textarea class="form-textarea" id="jNotes" placeholder="What worked, what didn't, what you'd change..."></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Loaves baked</label><input class="form-input" type="number" id="jLoaves" placeholder="1" /></div>
+        <div class="form-group">
+          <label class="form-label">Result</label>
+          <select class="form-input" id="jResult">
+            <option>Great</option><option selected>Good</option><option>OK</option><option>Needs work</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" id="saveJournalBtn">Save bake log</button>
+      <button class="btn-secondary" id="closeJournalModalBottom">Cancel</button>
+    </div>
+  </div>
+
+  <!-- UPGRADE MODAL -->
+  <div class="modal-overlay upgrade-modal" id="upgradeModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Upgrade to Premium</div>
+        <button class="modal-close" id="closeUpgradeModal">×</button>
+      </div>
+      <ul class="upgrade-features">
+        <li>Unlimited recipes — no more 3 recipe limit</li>
+        <li>Cloud sync — access recipes on any device</li>
+        <li>Full bake history per recipe</li>
+        <li>Inclusions tracker with batch scaling</li>
+        <li>Never lose your recipes</li>
+      </ul>
+      <div class="upgrade-price">
+        <div class="upgrade-amount"><span class="upgrade-currency">$</span>XX</div>
+        <div class="upgrade-period">One-off purchase — yours forever</div>
+      </div>
+      <button class="btn-primary" id="buyPremiumBtn">Get Premium — coming soon</button>
+      <div class="upgrade-note">Sign up at hoodyssourdoughkitchen.com.au to be first to know when it launches</div>
+    </div>
+  </div>
+
+  <script>
+    const FREE_LIMIT = 3;
+    let currentDetailId = null;
+    let editingRecipeId = null;
+    let loaves = 1;
+
+    // Storage helpers
+    function getRecipes() { try { return JSON.parse(localStorage.getItem('hb_recipes') || '[]'); } catch(e) { return []; } }
+    function setRecipes(r) { localStorage.setItem('hb_recipes', JSON.stringify(r)); }
+    function getJournal() { try { return JSON.parse(localStorage.getItem('hb_journal') || '[]'); } catch(e) { return []; } }
+    function setJournal(j) { localStorage.setItem('hb_journal', JSON.stringify(j)); }
+    function isPremium() { return localStorage.getItem('hb_premium') === 'true'; }
+
+    function calcHyd(r) {
+      const sh = (r.starterHyd || 100) / 100;
+      const sf = (r.starter || 0) / (1 + sh);
+      const sw = (r.starter || 0) - sf;
+      const tf = (r.flour || 0) + sf;
+      const tw = (r.water || 0) + sw;
+      if (!tf) return 0;
+      return Math.round((tw / tf) * 100);
+    }
+
+    // TABS
+    document.getElementById('tabBar').addEventListener('click', function(e) {
+      const tab = e.target.closest('.tab');
+      if (!tab) return;
+      const name = tab.dataset.tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + name).classList.add('active');
+      if (name === 'scale') refreshScaleSelect();
+      if (name === 'recipes') renderRecipes();
+    });
+
+    // BACK BUTTON
+    document.getElementById('backBtn').addEventListener('click', function() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-recipes').classList.add('active');
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('[data-tab="recipes"]').classList.add('active');
+      renderRecipes();
+    });
+
+    // RENDER RECIPES
+    function renderRecipes() {
+      const recipes = getRecipes();
+      const list = document.getElementById('recipeList');
+      list.innerHTML = '';
+
+      if (!isPremium()) {
+        document.getElementById('upgradeBanner').style.display = 'flex';
+        document.getElementById('upgradeBannerText').textContent = `You're on the free plan — ${recipes.length} of ${FREE_LIMIT} recipe slots used.`;
+      } else {
+        document.getElementById('upgradeBanner').style.display = 'none';
+      }
+
+      recipes.forEach(function(r) {
+        const hyd = calcHyd(r);
+        const card = document.createElement('div');
+        card.className = 'recipe-card';
+        card.innerHTML = '<div><div class="recipe-name">' + r.name + '</div><div class="recipe-meta">' + r.flour + 'g flour · ' + hyd + '% hydration</div></div><div class="recipe-hydration">' + hyd + '%</div>';
+        card.addEventListener('click', function() { openDetail(r.id); });
+        list.appendChild(card);
+      });
+
+      if (!isPremium()) {
+        const remaining = Math.max(0, FREE_LIMIT - recipes.length);
+        for (let i = 0; i < remaining; i++) {
+          const slot = document.createElement('div');
+          slot.className = 'recipe-card empty-slot';
+          slot.innerHTML = '<div class="empty-slot-text">Empty recipe slot</div><div style="font-size:20px;color:#d6d0c8;">+</div>';
+          list.appendChild(slot);
+        }
+        if (recipes.length >= FREE_LIMIT) {
+          const locked = document.createElement('div');
+          locked.className = 'recipe-card locked';
+          locked.innerHTML = '<div><div class="recipe-name">Unlock unlimited recipes</div><div class="recipe-meta">Upgrade to premium</div></div><div class="recipe-hydration" style="background:#f0e8e8;color:#c0392b;">🔒</div>';
+          locked.addEventListener('click', openUpgradeModal);
+          list.appendChild(locked);
+        }
+      }
+    }
+
+    // ADD RECIPE BUTTON
+    document.getElementById('addRecipeBtn').addEventListener('click', function() {
+      const recipes = getRecipes();
+      if (!isPremium() && recipes.length >= FREE_LIMIT) { openUpgradeModal(); return; }
+      editingRecipeId = null;
+      document.getElementById('recipeModalTitle').textContent = 'New recipe';
+      document.getElementById('rName').value = '';
+      document.getElementById('rFlour').value = '';
+      document.getElementById('rWater').value = '';
+      document.getElementById('rStarter').value = '';
+      document.getElementById('rStarterHyd').value = '100';
+      document.getElementById('rSalt').value = '';
+      document.getElementById('rNotes').value = '';
+      document.getElementById('inclusionsList').innerHTML = '';
+      document.getElementById('recipeModal').classList.add('open');
+    });
+
+    // UPGRADE BUTTON IN BANNER
+    document.getElementById('upgradeBtn').addEventListener('click', openUpgradeModal);
+
+    // OPEN RECIPE DETAIL
+    function openDetail(id) {
+      const r = getRecipes().find(function(x) { return x.id === id; });
+      if (!r) return;
+      currentDetailId = id;
+      const hyd = calcHyd(r);
+      document.getElementById('detailName').textContent = r.name;
+      document.getElementById('detailHyd').textContent = hyd + '%';
+      document.getElementById('detailIngredients').innerHTML =
+        '<div class="ingredient-row"><div class="ingredient-name">Flour</div><div class="ingredient-val">' + (r.flour || 0) + ' g</div></div>' +
+        '<div class="ingredient-row"><div class="ingredient-name">Water</div><div class="ingredient-val">' + (r.water || 0) + ' g</div></div>' +
+        '<div class="ingredient-row"><div class="ingredient-name">Starter</div><div class="ingredient-val">' + (r.starter || 0) + ' g</div></div>' +
+        '<div class="ingredient-row"><div class="ingredient-name">Salt</div><div class="ingredient-val">' + (r.salt || 0) + ' g</div></div>';
+
+      const inclSection = document.getElementById('detailInclusionsSection');
+      if (r.inclusions && r.inclusions.length > 0) {
+        inclSection.style.display = 'block';
+        document.getElementById('detailInclusions').innerHTML = r.inclusions.map(function(inc) {
+          return '<div class="ingredient-row"><div class="ingredient-name">' + inc.name + '</div><div class="ingredient-val">' + inc.qty + ' g</div></div>';
+        }).join('');
+      } else {
+        inclSection.style.display = 'none';
+      }
+
+      const notesSection = document.getElementById('detailNotesSection');
+      if (r.notes && r.notes.trim()) {
+        notesSection.style.display = 'block';
+        document.getElementById('detailNotes').textContent = r.notes;
+      } else {
+        notesSection.style.display = 'none';
+      }
+
+      renderDetailJournal(id);
+      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+      document.getElementById('screen-recipe-detail').classList.add('active');
+    }
+
+    function renderDetailJournal(recipeId) {
+      const entries = getJournal().filter(function(j) { return j.recipeId === recipeId; });
+      const container = document.getElementById('detailJournal');
+      if (!entries.length) {
+        container.innerHTML = '<div class="journal-empty">No bakes logged yet for this recipe.</div>';
+        return;
+      }
+      container.innerHTML = entries.map(function(entry) {
+        const date = entry.date ? new Date(entry.date + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+        return '<div class="journal-entry"><div class="journal-entry-header"><div class="journal-entry-date">' + date + '</div><div class="journal-entry-result">' + entry.result + '</div></div>' +
+          (entry.notes ? '<div class="journal-entry-note">' + entry.notes + '</div>' : '') +
+          '<div class="journal-entry-loaves">' + entry.loaves + ' loaf' + (entry.loaves > 1 ? 'ves' : '') + ' baked</div></div>';
+      }).join('');
+    }
+
+    // EDIT RECIPE FROM DETAIL
+    document.getElementById('editRecipeBtn').addEventListener('click', function() {
+      const r = getRecipes().find(function(x) { return x.id === currentDetailId; });
+      if (!r) return;
+      editingRecipeId = r.id;
+      document.getElementById('recipeModalTitle').textContent = 'Edit recipe';
+      document.getElementById('rName').value = r.name;
+      document.getElementById('rFlour').value = r.flour;
+      document.getElementById('rWater').value = r.water;
+      document.getElementById('rStarter').value = r.starter;
+      document.getElementById('rStarterHyd').value = r.starterHyd || 100;
+      document.getElementById('rSalt').value = r.salt;
+      document.getElementById('rNotes').value = r.notes || '';
+      document.getElementById('inclusionsList').innerHTML = '';
+      (r.inclusions || []).forEach(function(inc) { addInclusionRow(inc.name, inc.qty); });
+      document.getElementById('recipeModal').classList.add('open');
+    });
+
+    // DELETE RECIPE FROM DETAIL
+    document.getElementById('deleteRecipeBtn').addEventListener('click', function() {
+      if (!confirm('Delete this recipe and all its bake history?')) return;
+      setRecipes(getRecipes().filter(function(r) { return r.id !== currentDetailId; }));
+      setJournal(getJournal().filter(function(j) { return j.recipeId !== currentDetailId; }));
+      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+      document.getElementById('screen-recipes').classList.add('active');
+      document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelector('[data-tab="recipes"]').classList.add('active');
+      renderRecipes();
+      refreshScaleSelect();
+    });
+
+    // SAVE RECIPE
+    document.getElementById('saveRecipeBtn').addEventListener('click', function() {
+      const name = document.getElementById('rName').value.trim();
+      if (!name) { alert('Please enter a recipe name'); return; }
+      const inclusions = [];
+      document.querySelectorAll('#inclusionsList .inclusion-row').forEach(function(row) {
+        const inputs = row.querySelectorAll('input');
+        const n = inputs[0].value.trim();
+        const q = parseFloat(inputs[1].value) || 0;
+        if (n) inclusions.push({ name: n, qty: q });
+      });
+      const recipe = {
+        id: editingRecipeId || Date.now().toString(),
+        name: name,
+        flour: parseFloat(document.getElementById('rFlour').value) || 0,
+        water: parseFloat(document.getElementById('rWater').value) || 0,
+        starter: parseFloat(document.getElementById('rStarter').value) || 0,
+        starterHyd: parseFloat(document.getElementById('rStarterHyd').value) || 100,
+        salt: parseFloat(document.getElementById('rSalt').value) || 0,
+        notes: document.getElementById('rNotes').value,
+        inclusions: inclusions
+      };
+      const recipes = getRecipes();
+      if (editingRecipeId) {
+        const idx = recipes.findIndex(function(r) { return r.id === editingRecipeId; });
+        if (idx !== -1) recipes[idx] = recipe;
+      } else {
+        recipes.push(recipe);
+      }
+      setRecipes(recipes);
+      document.getElementById('recipeModal').classList.remove('open');
+      refreshScaleSelect();
+      if (editingRecipeId) {
+        openDetail(recipe.id);
+      } else {
+        renderRecipes();
+      }
+    });
+
+    // CLOSE MODALS
+    document.getElementById('closeRecipeModal').addEventListener('click', function() { document.getElementById('recipeModal').classList.remove('open'); });
+    document.getElementById('closeRecipeModalBottom').addEventListener('click', function() { document.getElementById('recipeModal').classList.remove('open'); });
+    document.getElementById('closeJournalModal').addEventListener('click', function() { document.getElementById('journalModal').classList.remove('open'); });
+    document.getElementById('closeJournalModalBottom').addEventListener('click', function() { document.getElementById('journalModal').classList.remove('open'); });
+    document.getElementById('closeUpgradeModal').addEventListener('click', function() { document.getElementById('upgradeModal').classList.remove('open'); });
+
+    // ADD INCLUSION ROW
+    document.getElementById('addInclusionBtn').addEventListener('click', function() { addInclusionRow(); });
+    function addInclusionRow(name, qty) {
+      const row = document.createElement('div');
+      row.className = 'inclusion-row';
+      row.innerHTML = '<input class="form-input inclusion-name" type="text" placeholder="e.g. Walnuts" value="' + (name || '') + '" /><input class="form-input inclusion-qty" type="number" placeholder="g" value="' + (qty || '') + '" /><button class="remove-btn">×</button>';
+      row.querySelector('.remove-btn').addEventListener('click', function() { row.remove(); });
+      document.getElementById('inclusionsList').appendChild(row);
+    }
+
+    // CALCULATOR
+    function calcUpdate() {
+      const flour = parseFloat(document.getElementById('cFlour').value) || 0;
+      const water = parseFloat(document.getElementById('cWater').value) || 0;
+      const starter = parseFloat(document.getElementById('cStarter').value) || 0;
+      const starterHyd = (parseFloat(document.getElementById('cStarterHyd').value) || 100) / 100;
+      const salt = parseFloat(document.getElementById('cSalt').value) || 0;
+      const sf = starter / (1 + starterHyd);
+      const sw = starter - sf;
+      const tf = flour + sf;
+      const tw = water + sw;
+      const dw = tf + tw + salt;
+      if (tf > 0) {
+        document.getElementById('calcPct').textContent = Math.round((tw / tf) * 100) + '%';
+        document.getElementById('calcTotalFlour').textContent = Math.round(tf) + ' g';
+        document.getElementById('calcTotalWater').textContent = Math.round(tw) + ' g';
+        document.getElementById('calcDoughWeight').textContent = Math.round(dw) + ' g';
+      } else {
+        document.getElementById('calcPct').textContent = '–';
+        document.getElementById('calcTotalFlour').textContent = '– g';
+        document.getElementById('calcTotalWater').textContent = '– g';
+        document.getElementById('calcDoughWeight').textContent = '– g';
+      }
+    }
+    ['cFlour','cWater','cStarter','cStarterHyd','cSalt'].forEach(function(id) {
+      document.getElementById(id).addEventListener('input', calcUpdate);
+    });
+    document.querySelectorAll('.preset-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const target = parseInt(btn.dataset.hyd);
+        const flour = parseFloat(document.getElementById('cFlour').value) || 440;
+        const starter = parseFloat(document.getElementById('cStarter').value) || 125;
+        const sh = (parseFloat(document.getElementById('cStarterHyd').value) || 100) / 100;
+        const sf = starter / (1 + sh);
+        const sw = starter - sf;
+        const tf = flour + sf;
+        const needed = Math.max(0, Math.round((target / 100) * tf - sw));
+        document.getElementById('cFlour').value = flour;
+        document.getElementById('cWater').value = needed;
+        calcUpdate();
+      });
+    });
+
+    // SCALE
+    function refreshScaleSelect() {
+      const sel = document.getElementById('scaleSelect');
+      const current = sel.value;
+      sel.innerHTML = '<option value="">— Select a recipe —</option>';
+      getRecipes().forEach(function(r) {
+        sel.innerHTML += '<option value="' + r.id + '">' + r.name + '</option>';
+      });
+      if (current) sel.value = current;
+      scaleUpdate();
+    }
+    document.getElementById('scaleSelect').addEventListener('change', scaleUpdate);
+    document.getElementById('loafMinus').addEventListener('click', function() { loaves = Math.max(1, loaves - 1); document.getElementById('loafCount').textContent = loaves; scaleUpdate(); });
+    document.getElementById('loafPlus').addEventListener('click', function() { loaves++; document.getElementById('loafCount').textContent = loaves; scaleUpdate(); });
+    function scaleUpdate() {
+      const id = document.getElementById('scaleSelect').value;
+      const results = document.getElementById('scaleResults');
+      if (!id) { results.innerHTML = '<div class="scale-empty">Select a recipe above to scale it up</div>'; return; }
+      const r = getRecipes().find(function(x) { return x.id === id; });
+      if (!r) return;
+      const m = loaves;
+      const sh = (r.starterHyd || 100) / 100;
+      const sf = (r.starter || 0) / (1 + sh);
+      const sw = (r.starter || 0) - sf;
+      const tf = (r.flour || 0) + sf;
+      const tw = (r.water || 0) + sw;
+      const hyd = tf ? Math.round((tw / tf) * 100) : 0;
+      let html = [
+        ['Flour', Math.round(r.flour * m)],
+        ['Water', Math.round(r.water * m)],
+        ['Starter', Math.round((r.starter || 0) * m)],
+        ['Salt', Math.round((r.salt || 0) * m)]
+      ].map(function(item) {
+        return '<div class="scale-row-item"><div class="scale-row-name">' + item[0] + '</div><div class="scale-row-val">' + item[1] + ' g</div></div>';
+      }).join('');
+      (r.inclusions || []).forEach(function(inc) {
+        html += '<div class="scale-row-item"><div class="scale-row-name">' + inc.name + '</div><div class="scale-row-val">' + Math.round(inc.qty * m) + ' g</div></div>';
+      });
+      html += '<div class="scale-row-item" style="background:#e8f4f5;border-color:rgba(74,158,166,0.3);"><div class="scale-row-name" style="color:#4A9EA6;">Hydration</div><div class="scale-row-val" style="color:#4A9EA6;">' + hyd + '%</div></div>';
+      results.innerHTML = html;
+    }
+
+    // LOG BAKE
+    document.getElementById('logBakeBtn').addEventListener('click', function() {
+      document.getElementById('jDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('jNotes').value = '';
+      document.getElementById('jLoaves').value = '1';
+      document.getElementById('jResult').value = 'Good';
+      document.getElementById('journalModal').classList.add('open');
+    });
+    document.getElementById('saveJournalBtn').addEventListener('click', function() {
+      if (!currentDetailId) return;
+      const entry = {
+        id: Date.now().toString(),
+        recipeId: currentDetailId,
+        date: document.getElementById('jDate').value,
+        notes: document.getElementById('jNotes').value,
+        loaves: parseInt(document.getElementById('jLoaves').value) || 1,
+        result: document.getElementById('jResult').value
+      };
+      const journal = getJournal();
+      journal.unshift(entry);
+      setJournal(journal);
+      document.getElementById('journalModal').classList.remove('open');
+      renderDetailJournal(currentDetailId);
+    });
+
+    // UPGRADE
+    function openUpgradeModal() { document.getElementById('upgradeModal').classList.add('open'); }
+    document.getElementById('buyPremiumBtn').addEventListener('click', function() {
+      alert('Premium coming soon! Sign up at hoodyssourdoughkitchen.com.au to be notified when it launches.');
+      document.getElementById('upgradeModal').classList.remove('open');
+    });
+
+    // INIT
+    renderRecipes();
+    refreshScaleSelect();
+  </script>
+</body>
+</html>
