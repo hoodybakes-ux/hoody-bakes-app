@@ -1,7 +1,7 @@
 {
-  "name": "Hoody Bakes — Sourdough Recipe Manager",
-  "short_name": "Hoody Bakes",
-  "description": "Your sourdough recipe manager, hydration calculator, and bake tracker. Built for real bakers.",
+  "name": "The Whole Loaf — Hoody's Sourdough Kitchen",
+  "short_name": "The Whole Loaf",
+  "description": "Your sourdough recipe manager, hydration calculator, and bake tracker. By Hoody's Sourdough Kitchen.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F0EDE8",

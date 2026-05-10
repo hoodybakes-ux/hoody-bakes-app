@@ -6,12 +6,12 @@
   <meta name="theme-color" content="#1C1C1A" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Hoody Bakes" />
-  <meta name="description" content="Your sourdough recipe manager, hydration calculator, and bake tracker." />
+  <meta name="apple-mobile-web-app-title" content="The Whole Loaf" />
+  <meta name="description" content="The Whole Loaf by Hoody's Sourdough Kitchen — your sourdough recipe manager, hydration calculator, and bake tracker." />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
-  <title>Hoody Bakes</title>
+  <title>The Whole Loaf — Hoody's Sourdough Kitchen</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -20,9 +20,11 @@
     html, body { height: 100%; }
     body { font-family: 'Montserrat', sans-serif; background: #F0EDE8; color: #1C1C1A; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; min-height: 100vh; }
 
-    .app-header { background: #1C1C1A; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-    .app-logo { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #F0EDE8; font-weight: 600; }
-    .app-logo span { color: #4A9EA6; }
+    .app-header { background: #1C1C1A; padding: 0.875rem 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 12px; }
+    .app-header-text { display: flex; flex-direction: column; gap: 2px; }
+    .app-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #F0EDE8; font-weight: 600; line-height: 1; letter-spacing: -0.3px; }
+    .app-subtitle { font-size: 9px; color: #4A9EA6; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; }
+    .app-header-logo { height: 48px; width: auto; display: block; flex-shrink: 0; }
     .plan-badge { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #6a6560; border: 1px solid #2a2a27; padding: 4px 10px; border-radius: 50px; }
 
     .tab-bar { background: #F0EDE8; border-bottom: 1px solid #d6d0c8; display: flex; flex-shrink: 0; }
@@ -239,7 +241,12 @@
 <body>
 
   <div class="app-header">
-    <div class="app-logo">Hoody <span>Bakes</span></div>
+    <div class="app-header-text">
+      <div class="app-title">The Whole Loaf</div>
+      <div class="app-subtitle">by Hoody's Sourdough Kitchen</div>
+    </div>
+    <img class="app-header-logo" src="Logo.png" alt="Hoody's Sourdough Kitchen" />
+  </div>
     <div class="plan-badge" id="planBadge">Free plan</div>
   </div>
 
@@ -345,7 +352,7 @@
 
   <footer>
     <img src="logo.png" alt="Hoody's Sourdough Kitchen" />
-    <p>&copy; 2026 Hoody Bakes &middot; All rights reserved</p>
+    <p>&copy; 2026 The Whole Loaf &middot; Hoody's Sourdough Kitchen &middot; All rights reserved</p>
   </footer>
 
   <!-- RECIPE MODAL -->
