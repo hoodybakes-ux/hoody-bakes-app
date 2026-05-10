@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1C1C1A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Hoody Bakes" />
+  <meta name="description" content="Your sourdough recipe manager, hydration calculator, and bake tracker." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <title>Hoody Bakes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -133,6 +141,85 @@
     footer { background: #1C1C1A; padding: 1.5rem; text-align: center; flex-shrink: 0; }
     footer img { height: 40px; width: auto; margin: 0 auto 0.5rem; display: block; }
     footer p { font-size: 11px; color: #444441; letter-spacing: 0.07em; font-weight: 300; }
+
+    /* COOK MODE */
+    .cook-overlay { display: none; position: fixed; inset: 0; background: #1C1C1A; z-index: 100; flex-direction: column; max-width: 480px; margin: 0 auto; }
+    .cook-overlay.open { display: flex; }
+    .cook-header { padding: 1.25rem 1.5rem 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2a2a27; flex-shrink: 0; }
+    .cook-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #F0EDE8; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+    .cook-exit { background: transparent; border: 1px solid #2a2a27; color: #9a9590; font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 16px; border-radius: 50px; cursor: pointer; flex-shrink: 0; }
+    .cook-progress-bar { height: 3px; background: #2a2a27; flex-shrink: 0; }
+    .cook-progress-fill { height: 100%; background: #4A9EA6; transition: width 0.4s ease; }
+    .cook-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding: 1.5rem; }
+    .cook-step-counter { font-size: 10px; color: #4A9EA6; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; margin-bottom: 0.5rem; }
+    .cook-step-title { font-family: 'Cormorant Garamond', serif; font-size: 34px; color: #F0EDE8; font-weight: 600; line-height: 1.1; margin-bottom: 1rem; }
+    .cook-step-body { font-size: 15px; color: #c8c3bc; line-height: 1.75; font-weight: 300; flex: 1; }
+    .cook-timer-section { margin-top: 1.5rem; }
+    .cook-timer-display { font-family: 'Cormorant Garamond', serif; font-size: 72px; color: #4A9EA6; font-weight: 600; line-height: 1; text-align: center; padding: 1rem 0 0.25rem; cursor: pointer; }
+    .cook-timer-display:hover { opacity: 0.8; }
+    .cook-timer-display.urgent { color: #e07b54; }
+    .cook-timer-display.done { color: #5cb85c; cursor: default; }
+    .cook-timer-display.no-time { color: #3a3a37; }
+    .cook-timer-lbl { text-align: center; font-size: 10px; color: #6a6560; text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 1rem; }
+    .cook-timer-presets { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
+    .cook-preset-pill { background: transparent; border: 1px solid #2a2a27; color: #9a9590; padding: 6px 14px; border-radius: 50px; font-size: 12px; font-family: 'Montserrat', sans-serif; cursor: pointer; }
+    .cook-preset-pill:hover { border-color: #4A9EA6; color: #4A9EA6; }
+    .cook-preset-pill.active { background: rgba(74,158,166,0.15); border-color: #4A9EA6; color: #4A9EA6; }
+    .cook-timer-btn { width: 100%; padding: 16px; border-radius: 50px; border: none; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+    .cook-timer-btn.start { background: #4A9EA6; color: #F0EDE8; }
+    .cook-timer-btn.pause { background: transparent; border: 1px solid #2a2a27; color: #9a9590; }
+    .cook-timer-btn.reset-btn { background: transparent; border: 1px solid #2a2a27; color: #9a9590; margin-top: 10px; }
+    .cook-timer-input-row { display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 1rem; }
+    .cook-timer-input { width: 70px; padding: 10px; text-align: center; border: 1px solid #2a2a27; border-radius: 10px; background: #2a2a27; color: #F0EDE8; font-family: 'Montserrat', sans-serif; font-size: 16px; outline: none; }
+    .cook-timer-input:focus { border-color: #4A9EA6; }
+    .cook-timer-sep { font-size: 24px; color: #6a6560; font-family: 'Cormorant Garamond', serif; }
+    .cook-footer { padding: 1rem 1.5rem 1.5rem; border-top: 1px solid #2a2a27; display: flex; gap: 10px; flex-shrink: 0; }
+    .cook-btn-prev { flex: 1; padding: 14px; border-radius: 50px; border: 1px solid #2a2a27; background: transparent; color: #9a9590; font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+    .cook-btn-prev:disabled { opacity: 0.3; cursor: default; }
+    .cook-btn-next { flex: 2; padding: 14px; border-radius: 50px; border: none; background: #4A9EA6; color: #F0EDE8; font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; font-weight: 400; }
+    .cook-btn-next.finish { background: #5cb85c; }
+    .cook-no-steps { text-align: center; padding: 3rem 1rem; color: #6a6560; font-size: 14px; font-weight: 300; line-height: 1.7; }
+
+    /* RECIPE PHOTO */
+    .recipe-photo-upload { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: 2px dashed #d6d0c8; background: #fafaf8; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative; margin-bottom: 1rem; }
+    .recipe-photo-upload:hover { border-color: #4A9EA6; }
+    .recipe-photo-upload img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+    .recipe-photo-placeholder { display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 1; }
+    .recipe-photo-placeholder span { font-size: 28px; }
+    .recipe-photo-placeholder p { font-size: 12px; color: #9a9590; font-weight: 300; }
+    .recipe-photo-remove { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 50%; background: rgba(28,28,26,0.7); border: none; color: #F0EDE8; font-size: 14px; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 2; }
+    .recipe-photo-upload:hover .recipe-photo-remove { display: flex; }
+    .detail-photo { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 16px; margin-bottom: 1rem; display: block; }
+
+    /* INGREDIENT CHECKLIST IN COOK MODE */
+    .cook-checklist { margin-top: 1.25rem; }
+    .cook-checklist-title { font-size: 10px; color: #6a6560; text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 0.75rem; }
+    .cook-check-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #2a2a27; cursor: pointer; }
+    .cook-check-item:last-child { border-bottom: none; }
+    .cook-check-box { width: 24px; height: 24px; border-radius: 6px; border: 2px solid #3a3a37; background: transparent; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .cook-check-item.checked .cook-check-box { background: #4A9EA6; border-color: #4A9EA6; }
+    .cook-check-item.checked .cook-check-box::after { content: '✓'; color: #F0EDE8; font-size: 13px; font-weight: 500; }
+    .cook-check-label { font-size: 14px; color: #c8c3bc; font-weight: 300; transition: all 0.15s; }
+    .cook-check-item.checked .cook-check-label { color: #3a3a37; text-decoration: line-through; }
+    .cook-check-val { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: #4A9EA6; font-weight: 600; margin-left: auto; flex-shrink: 0; }
+    .cook-check-item.checked .cook-check-val { color: #3a3a37; }
+    .cook-checklist-reset { background: transparent; border: none; color: #6a6560; font-size: 11px; font-family: 'Montserrat', sans-serif; text-decoration: underline; cursor: pointer; padding: 8px 0 0; display: block; }
+
+    /* STEPS EDITOR IN RECIPE FORM */
+    .steps-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    .step-row { display: flex; gap: 8px; align-items: flex-start; }
+    .step-inputs { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: #e8f4f5; color: #4A9EA6; font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 10px; }
+    .step-title-input { width: 100%; padding: 9px 12px; border: 1px solid #d6d0c8; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 13px; color: #1C1C1A; background: #fff; outline: none; }
+    .step-title-input:focus { border-color: #4A9EA6; }
+    .step-body-input { width: 100%; padding: 9px 12px; border: 1px solid #d6d0c8; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 12px; color: #1C1C1A; background: #fff; outline: none; resize: none; min-height: 60px; }
+    .step-body-input:focus { border-color: #4A9EA6; }
+    .step-timer-row { display: flex; align-items: center; gap: 8px; }
+    .step-timer-lbl { font-size: 11px; color: #9a9590; white-space: nowrap; }
+    .step-timer-mins { width: 70px; padding: 7px 10px; border: 1px solid #d6d0c8; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 12px; color: #1C1C1A; background: #fff; outline: none; }
+    .step-timer-mins:focus { border-color: #4A9EA6; }
+    .add-step-btn { background: transparent; border: 1px dashed #d6d0c8; color: #9a9590; padding: 8px 16px; border-radius: 50px; font-size: 12px; font-family: 'Montserrat', sans-serif; cursor: pointer; width: 100%; margin-bottom: 4px; }
+    .gen-steps-btn { background: rgba(74,158,166,0.1); border: 1px solid rgba(74,158,166,0.3); color: #4A9EA6; padding: 8px 16px; border-radius: 50px; font-size: 12px; font-family: 'Montserrat', sans-serif; cursor: pointer; width: 100%; margin-bottom: 8px; }
   </style>
 <meta name="google-site-verification" content="xOMH0mPVeotZcw0IPQF_0vICBhEPELJO4LquZJorqxg" />
 </head>
@@ -169,6 +256,7 @@
         <div class="recipe-detail-hyd" id="detailHyd"></div>
         <div class="recipe-detail-hyd-lbl">Overall hydration</div>
       </div>
+      <img id="detailPhoto" class="detail-photo" src="" alt="" style="display:none;" />
       <div class="section-divider">Ingredients</div>
       <div id="detailIngredients"></div>
       <div id="detailInclusionsSection" style="display:none;">
@@ -181,7 +269,8 @@
       </div>
       <div class="section-divider">Bake history</div>
       <div id="detailJournal"></div>
-      <button class="btn-primary" id="logBakeBtn" style="margin-top:0.5rem;">+ Log a bake</button>
+      <button class="btn-primary" id="startCookModeBtn" style="margin-top:0.5rem; background:#1C1C1A; display:flex; align-items:center; justify-content:center; gap:8px;">🍞 Start Cook Mode</button>
+      <button class="btn-primary" id="logBakeBtn" style="margin-top:10px;">+ Log a bake</button>
       <button class="btn-secondary" id="editRecipeBtn">Edit recipe</button>
       <button class="btn-danger" id="deleteRecipeBtn">Delete recipe</button>
     </div>
@@ -258,8 +347,27 @@
         <label class="form-label">Inclusions (optional)</label>
         <div class="inclusions-list" id="inclusionsList"></div>
         <button class="add-inclusion-btn" id="addInclusionBtn">+ Add inclusion</button>
+        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:10px;">Inclusions (seeds, nuts, dried fruit, honey, olive oil or anything else) are not included in the hydration calculation. Each affects your dough differently, so treat the hydration % as a guide for your base dough only.</p>
       </div>
       <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="rNotes" placeholder="Any notes about this recipe..."></textarea></div>
+      <div class="form-group">
+        <label class="form-label">Recipe photo (optional)</label>
+        <div class="recipe-photo-upload" id="photoUploadArea">
+          <div class="recipe-photo-placeholder" id="photoPlaceholder">
+            <span>📷</span>
+            <p>Tap to add a photo</p>
+          </div>
+          <img id="photoPreview" src="" alt="" style="display:none;" />
+          <button class="recipe-photo-remove" id="photoRemoveBtn" type="button">×</button>
+        </div>
+        <input type="file" id="photoFileInput" accept="image/*" style="display:none;" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cook Mode Steps</label>
+        <button class="gen-steps-btn" id="genStepsBtn">✨ Auto-generate steps from recipe</button>
+        <div class="steps-list" id="stepsList"></div>
+        <button class="add-step-btn" id="addStepBtn">+ Add a step</button>
+      </div>
       <button class="btn-primary" id="saveRecipeBtn">Save recipe</button>
       <button class="btn-secondary" id="closeRecipeModalBottom">Cancel</button>
     </div>
@@ -311,6 +419,71 @@
     </div>
   </div>
 
+  <!-- COOK MODE OVERLAY -->
+  <div class="cook-overlay" id="cookOverlay">
+    <div class="cook-header">
+      <div class="cook-title" id="cookRecipeName">Recipe</div>
+      <button class="cook-exit" id="cookExitBtn">✕ Exit</button>
+    </div>
+    <div class="cook-progress-bar"><div class="cook-progress-fill" id="cookProgressFill" style="width:0%"></div></div>
+    <div class="cook-body" id="cookBody">
+      <div class="cook-step-counter" id="cookStepCounter">Step 1 of 1</div>
+      <div class="cook-step-title" id="cookStepTitle"></div>
+      <div class="cook-step-body" id="cookStepBody"></div>
+      <div class="cook-checklist" id="cookChecklist" style="display:none;">
+        <div class="cook-checklist-title">⚖️ Ingredients — tap to check off</div>
+        <div id="cookChecklistItems"></div>
+        <button class="cook-checklist-reset" id="cookChecklistReset">Reset all</button>
+      </div>
+      <div class="cook-timer-section" id="cookTimerSection">
+        <!-- Idle state: preset display + quick-change presets -->
+        <div id="cookTimerIdle">
+          <div class="cook-timer-display" id="cookTimerDisplay">–:––</div>
+          <div class="cook-timer-lbl">tap time to edit · or pick a preset</div>
+          <div class="cook-timer-presets" id="cookTimerPresets">
+            <button class="cook-preset-pill" data-mins="15">15m</button>
+            <button class="cook-preset-pill" data-mins="30">30m</button>
+            <button class="cook-preset-pill" data-mins="45">45m</button>
+            <button class="cook-preset-pill" data-mins="60">1h</button>
+            <button class="cook-preset-pill" data-mins="120">2h</button>
+            <button class="cook-preset-pill" data-mins="240">4h</button>
+          </div>
+          <!-- Inline edit row — shown when user taps the time display -->
+          <div class="cook-timer-input-row" id="cookTimerInputRow" style="display:none;">
+            <input class="cook-timer-input" type="number" id="cookTimerMins" placeholder="0" min="0" max="999" />
+            <div class="cook-timer-sep">:</div>
+            <input class="cook-timer-input" type="number" id="cookTimerSecs" placeholder="00" min="0" max="59" />
+            <button class="cook-preset-pill" id="cookTimerSetBtn" style="background:#4A9EA6;color:#F0EDE8;border-color:#4A9EA6;">Set</button>
+          </div>
+          <button class="cook-timer-btn start" id="cookTimerStartBtn">Start Timer</button>
+        </div>
+        <!-- Running state -->
+        <div id="cookTimerRunning" style="display:none;">
+          <div class="cook-timer-display" id="cookTimerCountdown">0:00</div>
+          <div class="cook-timer-lbl" id="cookTimerRunLbl">remaining</div>
+          <button class="cook-timer-btn start" id="cookTimerPauseBtn">Pause</button>
+          <button class="cook-timer-btn reset-btn" id="cookTimerResetBtn">Reset Timer</button>
+        </div>
+      </div>
+    </div>
+    <div class="cook-footer">
+      <button class="cook-btn-prev" id="cookPrevBtn" disabled>← Prev</button>
+      <button class="cook-btn-next" id="cookNextBtn">Next Step →</button>
+    </div>
+  </div>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5MB7MQ9PWE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-5MB7MQ9PWE');
+    function trackEvent(name, params) {
+      if (typeof gtag !== 'undefined') gtag('event', name, params || {});
+    }
+  </script>
+
   <script>
     const FREE_LIMIT = 3;
     let currentDetailId = null;
@@ -324,6 +497,396 @@
     function setJournal(j) { localStorage.setItem('hb_journal', JSON.stringify(j)); }
     function isPremium() { return localStorage.getItem('hb_premium') === 'true'; }
 
+    // ── STEPS EDITOR ──────────────────────────────────────────────
+    function addStepRow(title, body, mins) {
+      const list = document.getElementById('stepsList');
+      const idx = list.children.length + 1;
+      const row = document.createElement('div');
+      row.className = 'step-row';
+      row.innerHTML =
+        '<div class="step-num">' + idx + '</div>' +
+        '<div class="step-inputs">' +
+          '<input class="step-title-input" type="text" placeholder="Step title (e.g. Autolyse)" value="' + (title || '') + '" />' +
+          '<textarea class="step-body-input" placeholder="Instructions for this step...">' + (body || '') + '</textarea>' +
+          '<div class="step-timer-row"><span class="step-timer-lbl">⏱ Timer (mins):</span><input class="step-timer-mins" type="number" placeholder="0" min="0" value="' + (mins || '') + '" /></div>' +
+        '</div>' +
+        '<button class="remove-btn" style="margin-top:10px;">×</button>';
+      row.querySelector('.remove-btn').addEventListener('click', function() {
+        row.remove();
+        renumberSteps();
+      });
+      list.appendChild(row);
+    }
+
+    function renumberSteps() {
+      document.querySelectorAll('#stepsList .step-num').forEach(function(el, i) { el.textContent = i + 1; });
+    }
+
+    function getStepsFromForm() {
+      const steps = [];
+      document.querySelectorAll('#stepsList .step-row').forEach(function(row) {
+        const title = row.querySelector('.step-title-input').value.trim();
+        const body = row.querySelector('.step-body-input').value.trim();
+        const mins = parseFloat(row.querySelector('.step-timer-mins').value) || 0;
+        if (title) steps.push({ title: title, body: body, mins: mins });
+      });
+      return steps;
+    }
+
+    function generateSteps(r) {
+      const steps = [];
+      const sh = (r.starterHyd || 100) / 100;
+      const sf = Math.round((r.starter || 0) / (1 + sh));
+      const sw = Math.round((r.starter || 0) - sf);
+      const totalFlour = (r.flour || 0) + sf;
+      const totalWater = (r.water || 0) + sw;
+      const inclText = (r.inclusions || []).length > 0
+        ? ' Add inclusions: ' + r.inclusions.map(function(i) { return i.qty + 'g ' + i.name; }).join(', ') + '.'
+        : '';
+
+      steps.push({ title: 'Feed your starter', body: 'Make sure your starter is active and bubbly before you begin. It should have peaked and be full of bubbles — the float test can help confirm it\'s ready.', mins: 0 });
+      steps.push({ title: 'Autolyse', body: 'Mix ' + totalFlour + 'g flour with ' + totalWater + 'g water until no dry flour remains. Cover and rest to hydrate the flour fully.', mins: 30 });
+      steps.push({ title: 'Add starter', body: 'Add ' + (r.starter || 0) + 'g of active starter to your dough. Squeeze and fold it in until fully incorporated.', mins: 0 });
+      steps.push({ title: 'Add salt', body: 'Sprinkle ' + (r.salt || 0) + 'g salt over the dough with a splash of water to help dissolve it. Fold it in thoroughly.' + inclText, mins: 0 });
+      steps.push({ title: 'Stretch & fold — Round 1', body: 'With wet hands, perform a set of stretch and folds: stretch the dough up and fold it over itself, rotating the bowl 90° each time. Do 4 folds total.', mins: 30 });
+      steps.push({ title: 'Stretch & fold — Round 2', body: 'Perform another set of stretch and folds. The dough should be starting to feel stronger and more elastic.', mins: 30 });
+      steps.push({ title: 'Stretch & fold — Round 3', body: 'Third set of stretch and folds. You can also try coil folds at this stage if you prefer.', mins: 30 });
+      steps.push({ title: 'Stretch & fold — Round 4', body: 'Final set of folds. After this, leave the dough to bulk ferment undisturbed.', mins: 0 });
+      steps.push({ title: 'Bulk fermentation', body: 'Cover the dough and leave at room temperature to bulk ferment. Look for a 50–75% rise with a domed top and bubbles around the edges. Time varies with temperature.', mins: 240 });
+      steps.push({ title: 'Pre-shape', body: 'Turn the dough out onto an unfloured surface. Use a bench scraper to fold and pre-shape into a rough round. Let it rest uncovered.', mins: 20 });
+      steps.push({ title: 'Final shape', body: 'Shape the dough into your desired form — batard or boule. Build tension by dragging the dough towards you on the bench. Place seam-side up into a floured banneton.', mins: 0 });
+      steps.push({ title: 'Cold proof', body: 'Cover and refrigerate overnight (8–16 hours). Cold proofing develops flavour and makes scoring easier.', mins: 0 });
+      steps.push({ title: 'Preheat oven & Dutch oven', body: 'Preheat your oven and Dutch oven to 250°C (480°F). Allow at least 45 minutes for it to fully heat through.', mins: 45 });
+      steps.push({ title: 'Score & bake (lid on)', body: 'Turn your dough out, score with a sharp lame or razor. Carefully lower into the hot Dutch oven, replace the lid, and bake.', mins: 20 });
+      steps.push({ title: 'Bake (lid off)', body: 'Remove the lid and continue baking until the crust is deep golden brown to your liking.', mins: 25 });
+      steps.push({ title: 'Cool on a wire rack', body: 'Resist cutting in too early! Leave your loaf to cool on a wire rack for at least 1 hour. The crumb continues to set as it cools.', mins: 60 });
+      return steps;
+    }
+
+    document.getElementById('addStepBtn').addEventListener('click', function() { addStepRow(); });
+
+    // ── PHOTO UPLOAD ─────────────────────────────────────────────
+    const photoUploadArea = document.getElementById('photoUploadArea');
+    const photoFileInput = document.getElementById('photoFileInput');
+    const photoPreview = document.getElementById('photoPreview');
+    const photoPlaceholder = document.getElementById('photoPlaceholder');
+    const photoRemoveBtn = document.getElementById('photoRemoveBtn');
+
+    photoUploadArea.addEventListener('click', function(e) {
+      if (e.target === photoRemoveBtn) return;
+      photoFileInput.click();
+    });
+
+    photoFileInput.addEventListener('change', function() {
+      const file = photoFileInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        photoPreview.src = e.target.result;
+        photoPreview.style.display = 'block';
+        photoPlaceholder.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    photoRemoveBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      photoPreview.src = '';
+      photoPreview.style.display = 'none';
+      photoPlaceholder.style.display = 'flex';
+      photoFileInput.value = '';
+    });
+    document.getElementById('genStepsBtn').addEventListener('click', function() {
+      if (document.querySelectorAll('#stepsList .step-row').length > 0) {
+        if (!confirm('This will replace your current steps with auto-generated ones. Continue?')) return;
+      }
+      document.getElementById('stepsList').innerHTML = '';
+      const r = {
+        flour: parseFloat(document.getElementById('rFlour').value) || 500,
+        water: parseFloat(document.getElementById('rWater').value) || 375,
+        starter: parseFloat(document.getElementById('rStarter').value) || 100,
+        starterHyd: parseFloat(document.getElementById('rStarterHyd').value) || 100,
+        salt: parseFloat(document.getElementById('rSalt').value) || 10,
+        inclusions: []
+      };
+      document.querySelectorAll('#inclusionsList .inclusion-row').forEach(function(row) {
+        const inputs = row.querySelectorAll('input');
+        const n = inputs[0].value.trim();
+        const q = parseFloat(inputs[1].value) || 0;
+        if (n) r.inclusions.push({ name: n, qty: q });
+      });
+      generateSteps(r).forEach(function(s) { addStepRow(s.title, s.body, s.mins || ''); });
+    });
+
+    // ── COOK MODE ────────────────────────────────────────────────
+    let cookSteps = [];
+    let cookStepIndex = 0;
+    let cookTimerInterval = null;
+    let cookTimerRemaining = 0;
+    let cookTimerRunning = false;
+    let wakeLock = null;
+
+    function buildChecklist(r) {
+      const items = [];
+      if (r.flour) items.push({ label: 'Flour', val: r.flour + 'g' });
+      if (r.water) items.push({ label: 'Water', val: r.water + 'g' });
+      if (r.starter) items.push({ label: 'Starter', val: r.starter + 'g' });
+      if (r.salt) items.push({ label: 'Salt', val: r.salt + 'g' });
+      (r.inclusions || []).forEach(function(inc) {
+        if (inc.name) items.push({ label: inc.name, val: inc.qty + 'g' });
+      });
+      const container = document.getElementById('cookChecklistItems');
+      container.innerHTML = items.map(function(item, i) {
+        return '<div class="cook-check-item" data-index="' + i + '">' +
+          '<div class="cook-check-box"></div>' +
+          '<div class="cook-check-label">' + item.label + '</div>' +
+          '<div class="cook-check-val">' + item.val + '</div>' +
+          '</div>';
+      }).join('');
+      container.querySelectorAll('.cook-check-item').forEach(function(el) {
+        el.addEventListener('click', function() {
+          el.classList.toggle('checked');
+        });
+      });
+      document.getElementById('cookChecklistReset').onclick = function() {
+        container.querySelectorAll('.cook-check-item').forEach(function(el) { el.classList.remove('checked'); });
+      };
+      document.getElementById('cookChecklist').style.display = items.length ? 'block' : 'none';
+    }
+
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch(e) { /* silently fail if not supported */ }
+    }
+
+    function releaseWakeLock() {
+      if (wakeLock) { wakeLock.release(); wakeLock = null; }
+    }
+
+    function openCookMode(recipeId) {
+      const r = getRecipes().find(function(x) { return x.id === recipeId; });
+      if (!r) return;
+      cookSteps = r.steps && r.steps.length ? r.steps : [];
+      cookStepIndex = 0;
+      document.getElementById('cookRecipeName').textContent = r.name;
+      document.getElementById('cookOverlay').classList.add('open');
+      requestWakeLock();
+      buildChecklist(r);
+      renderCookStep();
+    }
+
+    function closeCookMode() {
+      document.getElementById('cookOverlay').classList.remove('open');
+      clearInterval(cookTimerInterval);
+      cookTimerInterval = null;
+      cookTimerRunning = false;
+      releaseWakeLock();
+    }
+
+    function renderCookStep() {
+      clearInterval(cookTimerInterval);
+      cookTimerInterval = null;
+      cookTimerRunning = false;
+
+      const total = cookSteps.length;
+
+      if (!total) {
+        document.getElementById('cookBody').innerHTML =
+          '<div class="cook-no-steps">' +
+          '<div style="font-size:48px;margin-bottom:1rem;">🍞</div>' +
+          '<strong style="color:#F0EDE8;font-family:\'Cormorant Garamond\',serif;font-size:24px;">No steps yet</strong>' +
+          '<p style="margin-top:0.75rem;">Edit this recipe and add cook mode steps — or use the auto-generate button to create a full sourdough guide.</p>' +
+          '</div>';
+        document.getElementById('cookProgressFill').style.width = '0%';
+        document.getElementById('cookPrevBtn').disabled = true;
+        document.getElementById('cookNextBtn').textContent = 'Close';
+        document.getElementById('cookNextBtn').className = 'cook-btn-next';
+        document.getElementById('cookNextBtn').onclick = closeCookMode;
+        return;
+      }
+
+      const step = cookSteps[cookStepIndex];
+      const pct = Math.round(((cookStepIndex + 1) / total) * 100);
+
+      document.getElementById('cookStepCounter').textContent = 'Step ' + (cookStepIndex + 1) + ' of ' + total;
+      document.getElementById('cookStepTitle').textContent = step.title || '';
+      document.getElementById('cookStepBody').textContent = step.body || '';
+      document.getElementById('cookProgressFill').style.width = pct + '%';
+      document.getElementById('cookPrevBtn').disabled = cookStepIndex === 0;
+      // Show checklist on first step only
+      document.getElementById('cookChecklist').style.display = cookStepIndex === 0 ? '' : 'none';
+
+      const isLast = cookStepIndex === total - 1;
+      document.getElementById('cookNextBtn').textContent = isLast ? 'Finish 🎉' : 'Next Step →';
+      document.getElementById('cookNextBtn').className = 'cook-btn-next' + (isLast ? ' finish' : '');
+      document.getElementById('cookNextBtn').onclick = isLast ? closeCookMode : function() { cookStepIndex++; renderCookStep(); };
+      document.getElementById('cookPrevBtn').onclick = function() { cookStepIndex--; renderCookStep(); };
+
+      // Timer
+      const timerSection = document.getElementById('cookTimerSection');
+      timerSection.style.display = 'block';
+      const hasMins = step.mins && step.mins > 0;
+      cookTimerRemaining = hasMins ? Math.round(step.mins * 60) : 0;
+
+      const idleEl = document.getElementById('cookTimerIdle');
+      const runningEl = document.getElementById('cookTimerRunning');
+      const display = document.getElementById('cookTimerDisplay');
+      const inputRow = document.getElementById('cookTimerInputRow');
+      const startBtn = document.getElementById('cookTimerStartBtn');
+      const pauseBtn = document.getElementById('cookTimerPauseBtn');
+      const resetBtn = document.getElementById('cookTimerResetBtn');
+      const countdown = document.getElementById('cookTimerCountdown');
+      const runLbl = document.getElementById('cookTimerRunLbl');
+
+      // Show idle state
+      idleEl.style.display = 'block';
+      runningEl.style.display = 'none';
+      inputRow.style.display = 'none';
+
+      // Set display to preset time or dash
+      display.textContent = hasMins ? formatTime(cookTimerRemaining) : '–:––';
+      display.className = 'cook-timer-display' + (hasMins ? '' : ' no-time');
+
+      // Highlight matching preset pill if applicable
+      document.querySelectorAll('.cook-preset-pill').forEach(function(pill) {
+        const pillSecs = parseInt(pill.dataset.mins || 0) * 60;
+        pill.classList.toggle('active', hasMins && pillSecs === cookTimerRemaining);
+      });
+
+      // Tap display to edit manually
+      display.onclick = function() {
+        if (inputRow.style.display === 'none') {
+          const m = cookTimerRemaining ? Math.floor(cookTimerRemaining / 60) : '';
+          const s = cookTimerRemaining ? cookTimerRemaining % 60 : '';
+          document.getElementById('cookTimerMins').value = m;
+          document.getElementById('cookTimerSecs').value = s === 0 ? '00' : s;
+          inputRow.style.display = 'flex';
+          document.getElementById('cookTimerMins').focus();
+        } else {
+          inputRow.style.display = 'none';
+        }
+      };
+
+      // Set button confirms manual edit
+      document.getElementById('cookTimerSetBtn').onclick = function() {
+        const m = parseInt(document.getElementById('cookTimerMins').value) || 0;
+        const s = parseInt(document.getElementById('cookTimerSecs').value) || 0;
+        cookTimerRemaining = m * 60 + s;
+        display.textContent = cookTimerRemaining > 0 ? formatTime(cookTimerRemaining) : '–:––';
+        display.className = 'cook-timer-display' + (cookTimerRemaining > 0 ? '' : ' no-time');
+        inputRow.style.display = 'none';
+        document.querySelectorAll('.cook-preset-pill').forEach(function(p) { p.classList.remove('active'); });
+      };
+
+      // Preset pills
+      document.querySelectorAll('.cook-preset-pill').forEach(function(pill) {
+        if (!pill.dataset.mins) return;
+        pill.onclick = function() {
+          cookTimerRemaining = parseInt(pill.dataset.mins) * 60;
+          display.textContent = formatTime(cookTimerRemaining);
+          display.className = 'cook-timer-display';
+          inputRow.style.display = 'none';
+          document.querySelectorAll('.cook-preset-pill').forEach(function(p) { p.classList.remove('active'); });
+          pill.classList.add('active');
+        };
+      });
+
+      // Start timer
+      startBtn.onclick = function() {
+        if (cookTimerRemaining <= 0) return;
+        idleEl.style.display = 'none';
+        runningEl.style.display = 'block';
+        countdown.textContent = formatTime(cookTimerRemaining);
+        countdown.className = 'cook-timer-display';
+        runLbl.textContent = 'remaining';
+        cookTimerRunning = true;
+        pauseBtn.textContent = 'Pause';
+        pauseBtn.className = 'cook-timer-btn start';
+        cookTimerInterval = setInterval(function() {
+          cookTimerRemaining--;
+          if (cookTimerRemaining <= 0) {
+            cookTimerRemaining = 0;
+            clearInterval(cookTimerInterval);
+            cookTimerRunning = false;
+            countdown.textContent = 'Done!';
+            countdown.className = 'cook-timer-display done';
+            runLbl.textContent = 'timer complete ✓';
+            pauseBtn.textContent = 'Timer Done ✓';
+            pauseBtn.className = 'cook-timer-btn pause';
+          } else {
+            countdown.textContent = formatTime(cookTimerRemaining);
+            countdown.className = cookTimerRemaining <= 30 ? 'cook-timer-display urgent' : 'cook-timer-display';
+          }
+        }, 1000);
+      };
+
+      // Pause/resume
+      pauseBtn.onclick = function() {
+        if (cookTimerRunning) {
+          clearInterval(cookTimerInterval);
+          cookTimerRunning = false;
+          pauseBtn.textContent = 'Resume';
+          pauseBtn.className = 'cook-timer-btn start';
+        } else if (cookTimerRemaining > 0) {
+          cookTimerRunning = true;
+          pauseBtn.textContent = 'Pause';
+          pauseBtn.className = 'cook-timer-btn start';
+          cookTimerInterval = setInterval(function() {
+            cookTimerRemaining--;
+            if (cookTimerRemaining <= 0) {
+              cookTimerRemaining = 0;
+              clearInterval(cookTimerInterval);
+              cookTimerRunning = false;
+              countdown.textContent = 'Done!';
+              countdown.className = 'cook-timer-display done';
+              runLbl.textContent = 'timer complete ✓';
+              pauseBtn.textContent = 'Timer Done ✓';
+              pauseBtn.className = 'cook-timer-btn pause';
+            } else {
+              countdown.textContent = formatTime(cookTimerRemaining);
+              countdown.className = cookTimerRemaining <= 30 ? 'cook-timer-display urgent' : 'cook-timer-display';
+            }
+          }, 1000);
+        }
+      };
+
+      // Reset
+      resetBtn.onclick = function() {
+        clearInterval(cookTimerInterval);
+        cookTimerRunning = false;
+        cookTimerRemaining = hasMins ? Math.round(step.mins * 60) : 0;
+        idleEl.style.display = 'block';
+        runningEl.style.display = 'none';
+        inputRow.style.display = 'none';
+        display.textContent = hasMins ? formatTime(cookTimerRemaining) : '–:––';
+        display.className = 'cook-timer-display' + (hasMins ? '' : ' no-time');
+        document.querySelectorAll('.cook-preset-pill').forEach(function(pill) {
+          const pillSecs = parseInt(pill.dataset.mins || 0) * 60;
+          pill.classList.toggle('active', hasMins && pillSecs === cookTimerRemaining);
+        });
+      };
+    }
+
+    function formatTime(secs) {
+      const m = Math.floor(secs / 60);
+      const s = secs % 60;
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    document.getElementById('cookExitBtn').addEventListener('click', function() {
+      if (confirm('Exit cook mode?')) closeCookMode();
+    });
+
+    document.getElementById('startCookModeBtn').addEventListener('click', function() {
+      if (currentDetailId) {
+        const r = getRecipes().find(function(x) { return x.id === currentDetailId; });
+        trackEvent('cook_mode_started', { recipe_name: r ? r.name : 'unknown' });
+        openCookMode(currentDetailId);
+      }
+    });
     function calcHyd(r) {
       const sh = (r.starterHyd || 100) / 100;
       const sf = (r.starter || 0) / (1 + sh);
@@ -345,6 +908,7 @@
       document.getElementById('screen-' + name).classList.add('active');
       if (name === 'scale') refreshScaleSelect();
       if (name === 'recipes') renderRecipes();
+      trackEvent('tab_viewed', { tab_name: name });
     });
 
     // BACK BUTTON
@@ -373,7 +937,10 @@
         const hyd = calcHyd(r);
         const card = document.createElement('div');
         card.className = 'recipe-card';
-        card.innerHTML = '<div><div class="recipe-name">' + r.name + '</div><div class="recipe-meta">' + r.flour + 'g flour · ' + hyd + '% hydration</div></div><div class="recipe-hydration">' + hyd + '%</div>';
+        card.innerHTML = '<div style="display:flex;align-items:center;gap:12px;width:100%;">' +
+          (r.photo ? '<img src="' + r.photo + '" style="width:52px;height:52px;object-fit:cover;border-radius:10px;flex-shrink:0;" />' : '') +
+          '<div style="flex:1;min-width:0;"><div class="recipe-name">' + r.name + '</div><div class="recipe-meta">' + r.flour + 'g flour · ' + hyd + '% hydration</div></div>' +
+          '<div class="recipe-hydration">' + hyd + '%</div></div>';
         card.addEventListener('click', function() { openDetail(r.id); });
         list.appendChild(card);
       });
@@ -410,6 +977,10 @@
       document.getElementById('rSalt').value = '';
       document.getElementById('rNotes').value = '';
       document.getElementById('inclusionsList').innerHTML = '';
+      document.getElementById('stepsList').innerHTML = '';
+      document.getElementById('photoPreview').src = '';
+      document.getElementById('photoPreview').style.display = 'none';
+      document.getElementById('photoPlaceholder').style.display = 'flex';
       document.getElementById('recipeModal').classList.add('open');
     });
 
@@ -424,6 +995,9 @@
       const hyd = calcHyd(r);
       document.getElementById('detailName').textContent = r.name;
       document.getElementById('detailHyd').textContent = hyd + '%';
+      const detailPhoto = document.getElementById('detailPhoto');
+      if (r.photo) { detailPhoto.src = r.photo; detailPhoto.style.display = 'block'; }
+      else { detailPhoto.src = ''; detailPhoto.style.display = 'none'; }
       document.getElementById('detailIngredients').innerHTML =
         '<div class="ingredient-row"><div class="ingredient-name">Flour</div><div class="ingredient-val">' + (r.flour || 0) + ' g</div></div>' +
         '<div class="ingredient-row"><div class="ingredient-name">Water</div><div class="ingredient-val">' + (r.water || 0) + ' g</div></div>' +
@@ -483,6 +1057,13 @@
       document.getElementById('rNotes').value = r.notes || '';
       document.getElementById('inclusionsList').innerHTML = '';
       (r.inclusions || []).forEach(function(inc) { addInclusionRow(inc.name, inc.qty); });
+      document.getElementById('stepsList').innerHTML = '';
+      (r.steps || []).forEach(function(s) { addStepRow(s.title, s.body, s.mins || ''); });
+      // Photo
+      const preview = document.getElementById('photoPreview');
+      const placeholder = document.getElementById('photoPlaceholder');
+      if (r.photo) { preview.src = r.photo; preview.style.display = 'block'; placeholder.style.display = 'none'; }
+      else { preview.src = ''; preview.style.display = 'none'; placeholder.style.display = 'flex'; }
       document.getElementById('recipeModal').classList.add('open');
     });
 
@@ -519,14 +1100,18 @@
         starterHyd: parseFloat(document.getElementById('rStarterHyd').value) || 100,
         salt: parseFloat(document.getElementById('rSalt').value) || 0,
         notes: document.getElementById('rNotes').value,
-        inclusions: inclusions
+        inclusions: inclusions,
+        steps: getStepsFromForm(),
+        photo: document.getElementById('photoPreview').src || null
       };
       const recipes = getRecipes();
       if (editingRecipeId) {
         const idx = recipes.findIndex(function(r) { return r.id === editingRecipeId; });
         if (idx !== -1) recipes[idx] = recipe;
+        trackEvent('recipe_updated', { recipe_name: recipe.name });
       } else {
         recipes.push(recipe);
+        trackEvent('recipe_created', { recipe_name: recipe.name });
       }
       setRecipes(recipes);
       document.getElementById('recipeModal').classList.remove('open');
@@ -594,6 +1179,7 @@
         const needed = Math.max(0, Math.round((target / 100) * tf - sw));
         document.getElementById('cFlour').value = flour;
         document.getElementById('cWater').value = needed;
+        trackEvent('calculator_preset_used', { hydration: target });
         calcUpdate();
       });
     });
@@ -661,13 +1247,18 @@
       const journal = getJournal();
       journal.unshift(entry);
       setJournal(journal);
+      trackEvent('bake_logged', { result: entry.result, loaves: entry.loaves });
       document.getElementById('journalModal').classList.remove('open');
       renderDetailJournal(currentDetailId);
     });
 
     // UPGRADE
-    function openUpgradeModal() { document.getElementById('upgradeModal').classList.add('open'); }
+    function openUpgradeModal() {
+      trackEvent('upgrade_modal_seen');
+      document.getElementById('upgradeModal').classList.add('open');
+    }
     document.getElementById('buyPremiumBtn').addEventListener('click', function() {
+      trackEvent('upgrade_cta_clicked');
       alert('Premium coming soon! Sign up at hoodyssourdoughkitchen.com.au to be notified when it launches.');
       document.getElementById('upgradeModal').classList.remove('open');
     });
@@ -675,6 +1266,17 @@
     // INIT
     renderRecipes();
     refreshScaleSelect();
+
+    // PWA SERVICE WORKER
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(reg) {
+          console.log('Hoody Bakes SW registered:', reg.scope);
+        }).catch(function(err) {
+          console.log('SW registration failed:', err);
+        });
+      });
+    }
   </script>
 </body>
 </html>
