@@ -138,7 +138,20 @@
     .upgrade-period { font-size: 12px; color: #6a6560; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
     .upgrade-note { font-size: 11px; color: #6a6560; text-align: center; margin-top: 10px; font-weight: 300; }
 
-    footer { background: #1C1C1A; padding: 1.5rem; text-align: center; flex-shrink: 0; }
+    /* SAMSUNG BROWSER BANNER */
+    .browser-banner {
+      display: none;
+      background: #fff8e1;
+      border-bottom: 2px solid #f5c842;
+      padding: 12px 16px;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .browser-banner.show { display: flex; }
+    .browser-banner-text { flex: 1; font-size: 12px; color: #5a4e00; font-weight: 400; line-height: 1.5; }
+    .browser-banner-text strong { display: block; font-weight: 500; margin-bottom: 2px; }
+    .browser-banner-dismiss { background: #f5c842; border: none; border-radius: 50px; padding: 7px 14px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 500; color: #5a4e00; cursor: pointer; flex-shrink: 0; letter-spacing: 0.04em; }
     footer img { height: 40px; width: auto; margin: 0 auto 0.5rem; display: block; }
     footer p { font-size: 11px; color: #444441; letter-spacing: 0.07em; font-weight: 300; }
 
@@ -228,6 +241,15 @@
   <div class="app-header">
     <div class="app-logo">Hoody <span>Bakes</span></div>
     <div class="plan-badge" id="planBadge">Free plan</div>
+  </div>
+
+  <!-- SAMSUNG INTERNET BANNER -->
+  <div class="browser-banner" id="samsungBanner">
+    <div class="browser-banner-text">
+      <strong>Heads up! 👋</strong>
+      Samsung Internet doesn't play nicely with this app. For the best experience, open it in <strong>Chrome</strong> or <strong>Safari</strong> instead.
+    </div>
+    <button class="browser-banner-dismiss" id="samsungBannerDismiss">Got it</button>
   </div>
 
   <div class="tab-bar" id="tabBar">
@@ -1262,6 +1284,20 @@
       alert('Premium coming soon! Sign up at hoodyssourdoughkitchen.com.au to be notified when it launches.');
       document.getElementById('upgradeModal').classList.remove('open');
     });
+
+    // SAMSUNG INTERNET DETECTION
+    (function() {
+      const ua = navigator.userAgent;
+      const isSamsung = /SamsungBrowser/i.test(ua);
+      const dismissed = localStorage.getItem('hb_samsung_dismissed');
+      if (isSamsung && !dismissed) {
+        document.getElementById('samsungBanner').classList.add('show');
+      }
+      document.getElementById('samsungBannerDismiss').addEventListener('click', function() {
+        document.getElementById('samsungBanner').classList.remove('show');
+        localStorage.setItem('hb_samsung_dismissed', '1');
+      });
+    })();
 
     // INIT
     renderRecipes();
