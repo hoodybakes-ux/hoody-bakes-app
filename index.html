@@ -87,7 +87,7 @@
     .inclusion-wet-select { font-size: 11px; font-family: 'Montserrat', sans-serif; border: 1px solid #d6d0c8; border-radius: 6px; padding: 4px 6px; color: #1C1C1A; background: #fff; outline: none; }
     .inclusion-wet-pct { width: 60px; font-size: 11px; font-family: 'Montserrat', sans-serif; border: 1px solid #d6d0c8; border-radius: 6px; padding: 4px 6px; color: #1C1C1A; background: #fff; outline: none; text-align: center; }
     .inclusion-wet-toggle { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #9a9590; cursor: pointer; white-space: nowrap; }
-    .wet-check { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #d6d0c8; background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; }
+    .wet-check { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #d6d0c8; background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: transparent; }
     .wet-check.on { background: #4A9EA6; border-color: #4A9EA6; color: #fff; }
     .inclusion-name { flex: 1; }
     .inclusion-qty { width: 80px; }
@@ -527,7 +527,7 @@
         <label class="form-label">Inclusions (optional)</label>
         <div class="inclusions-list" id="inclusionsList"></div>
         <button class="add-inclusion-btn" id="addInclusionBtn">+ Add inclusion</button>
-        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:10px;">Tap "affects hydration" on wet inclusions like honey or maple syrup to factor their water content into your hydration %. Dry inclusions (seeds, nuts, cheese etc.) don't affect hydration. Water content values sourced from the <a href="https://www.foodstandards.gov.au/science-data/food-nutrient-databases/afcd" target="_blank" style="color:#4A9EA6;">Australian Food Composition Database (FSANZ)</a>.</p>
+        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:10px;">By default, inclusions are left out of the hydration %, which is how most recipes treat them. If you want full precision, tap "counts toward hydration" on a wet inclusion like honey or maple syrup to add its water content to the calculation. Water content values sourced from the <a href="https://www.foodstandards.gov.au/science-data/food-nutrient-databases/afcd" target="_blank" style="color:#4A9EA6;">Australian Food Composition Database (FSANZ)</a>.</p>
       </div>
       <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="rNotes" placeholder="Any notes about this recipe..."></textarea></div>
       <div class="form-group">
@@ -1357,7 +1357,7 @@
       row.innerHTML =
         '<input class="form-input inclusion-name" type="text" placeholder="e.g. Walnuts" value="' + (name || '') + '" />' +
         '<input class="form-input inclusion-qty" type="number" placeholder="g" value="' + (qty || '') + '" style="width:80px;flex-shrink:0;" />' +
-        '<div class="inclusion-wet-toggle js-wet-toggle"><div class="wet-check' + (isWet ? ' on' : '') + '">✓</div><span>hydration</span></div>' +
+        '<div class="inclusion-wet-toggle js-wet-toggle"><div class="wet-check' + (isWet ? ' on' : '') + '">✓</div><span>counts toward hydration</span></div>' +
         '<button class="remove-btn">×</button>';
 
       const wetRow = document.createElement('div');
