@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoody-bakes-v1';
+const CACHE_NAME = 'the-whole-loaf-v4';
 const ASSETS = [
   '/',
   '/index.html',

@@ -7,11 +7,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="The Whole Loaf" />
-  <meta name="description" content="The Whole Loaf by Hoody's Sourdough Kitchen — your sourdough recipe manager, hydration calculator, and bake tracker." />
+  <meta name="description" content="The Whole Loaf by Hoody's Sourdough Kitchen: your sourdough recipe manager, hydration calculator, and bake tracker." />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
-  <title>The Whole Loaf — Hoody's Sourdough Kitchen</title>
+  <title>The Whole Loaf | Hoody's Sourdough Kitchen</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -68,6 +68,27 @@
 
     .inclusions-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
     .inclusion-row { display: flex; gap: 8px; align-items: center; }
+
+    /* FLOUR BLEND */
+    .flour-blend-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+    .flour-row { display: flex; gap: 8px; align-items: center; }
+    .flour-row .form-input { flex: 1; }
+    .flour-row .flour-qty { width: 90px; flex-shrink: 0; }
+    .flour-total-bar { background: rgba(74,158,166,0.08); border: 1px solid rgba(74,158,166,0.2); border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .flour-total-lbl { font-size: 11px; color: #9a9590; font-weight: 300; }
+    .flour-total-val { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: #4A9EA6; font-weight: 600; }
+    .add-flour-btn { background: transparent; border: 1px dashed #d6d0c8; color: #9a9590; padding: 7px 14px; border-radius: 50px; font-size: 11px; font-family: 'Montserrat', sans-serif; cursor: pointer; width: 100%; margin-bottom: 4px; }
+
+    /* WET INCLUSIONS */
+    .inclusion-row-wrap { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
+    .inclusion-row { display: flex; gap: 8px; align-items: center; }
+    .inclusion-wet-row { display: flex; align-items: center; gap: 8px; padding: 5px 10px; background: rgba(74,158,166,0.06); border-radius: 8px; }
+    .inclusion-wet-lbl { font-size: 10px; color: #4A9EA6; font-weight: 400; flex: 1; }
+    .inclusion-wet-select { font-size: 11px; font-family: 'Montserrat', sans-serif; border: 1px solid #d6d0c8; border-radius: 6px; padding: 4px 6px; color: #1C1C1A; background: #fff; outline: none; }
+    .inclusion-wet-pct { width: 60px; font-size: 11px; font-family: 'Montserrat', sans-serif; border: 1px solid #d6d0c8; border-radius: 6px; padding: 4px 6px; color: #1C1C1A; background: #fff; outline: none; text-align: center; }
+    .inclusion-wet-toggle { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #9a9590; cursor: pointer; white-space: nowrap; }
+    .wet-check { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #d6d0c8; background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; }
+    .wet-check.on { background: #4A9EA6; border-color: #4A9EA6; color: #fff; }
     .inclusion-name { flex: 1; }
     .inclusion-qty { width: 80px; }
     .remove-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #f5c6c2; background: transparent; color: #c0392b; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
@@ -139,6 +160,48 @@
     .upgrade-currency { font-size: 20px; color: #4A9EA6; vertical-align: super; }
     .upgrade-period { font-size: 12px; color: #6a6560; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
     .upgrade-note { font-size: 11px; color: #6a6560; text-align: center; margin-top: 10px; font-weight: 300; }
+
+    /* BULK TIMER */
+    .bulk-card { background: #fff; border: 1px solid #d6d0c8; border-radius: 16px; padding: 1.25rem; margin-bottom: 14px; }
+    .bulk-card-title { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #4A9EA6; margin-bottom: 1rem; padding-bottom: 8px; border-bottom: 1px solid #e8e4de; }
+    .bulk-hint { font-size: 11px; color: #9a9590; font-weight: 300; line-height: 1.6; }
+    .bulk-temp-toggle-row { display: flex; justify-content: flex-end; margin-top: -6px; margin-bottom: 12px; }
+    .bulk-temp-toggle { display: flex; background: #F0EDE8; border: 1px solid #d6d0c8; border-radius: 50px; padding: 3px; }
+    .bulk-temp-btn { padding: 5px 12px; border: none; border-radius: 50px; background: transparent; font-family: 'Montserrat', sans-serif; font-size: 11px; color: #9a9590; cursor: pointer; }
+    .bulk-temp-btn.active { background: #1C1C1A; color: #F0EDE8; }
+    .bulk-dark-card { background: #1C1C1A; border-radius: 16px; padding: 1.25rem; margin-bottom: 14px; }
+    .bulk-dark-title { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #6a6560; margin-bottom: 0.75rem; padding-bottom: 8px; border-bottom: 1px solid #2a2a27; }
+    .bulk-window-row { display: flex; align-items: baseline; gap: 8px; }
+    .bulk-window-val { font-family: 'Cormorant Garamond', serif; font-size: 44px; color: #4A9EA6; font-weight: 600; line-height: 1; }
+    .bulk-window-unit { font-size: 13px; color: #6a6560; font-weight: 300; }
+    .bulk-rise-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 0; margin-top: 12px; border-top: 1px solid #2a2a27; }
+    .bulk-rise-lbl { font-size: 12px; color: #9a9590; font-weight: 300; }
+    .bulk-rise-val { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #F0EDE8; font-weight: 600; }
+    .bulk-disclaimer { font-size: 11px; color: #6a6560; font-weight: 300; line-height: 1.6; background: rgba(255,255,255,0.04); border: 1px solid #2a2a27; border-radius: 8px; padding: 8px 12px; margin-top: 12px; }
+    .bulk-timer-card { background: linear-gradient(135deg, rgba(74,158,166,0.15) 0%, rgba(74,158,166,0.04) 100%); border: 1px solid rgba(74,158,166,0.3); border-radius: 16px; padding: 1.25rem; margin-bottom: 14px; text-align: center; }
+    .bulk-timer-elapsed { font-family: 'Cormorant Garamond', serif; font-size: 60px; color: #1C1C1A; font-weight: 600; line-height: 1; letter-spacing: -1px; }
+    .bulk-timer-elapsed.in-window { color: #4A9EA6; }
+    .bulk-timer-elapsed.past-window { color: #e07b54; }
+    .bulk-timer-lbl { font-size: 10px; color: #9a9590; text-transform: uppercase; letter-spacing: 0.14em; margin-top: 6px; }
+    .bulk-progress { height: 4px; background: #d6d0c8; border-radius: 4px; margin: 0.9rem 0 0.35rem; overflow: hidden; }
+    .bulk-progress-fill { height: 100%; width: 0%; background: #4A9EA6; border-radius: 4px; transition: width 1s linear; max-width: 100%; }
+    .bulk-progress-fill.past { background: #e07b54; }
+    .bulk-window-labels { display: flex; justify-content: space-between; font-size: 10px; color: #9a9590; margin-bottom: 0.6rem; }
+    .bulk-rise-reminder { font-size: 12px; color: #5a554f; font-weight: 300; line-height: 1.6; text-align: left; }
+    .bulk-rise-reminder strong { color: #4A9EA6; font-weight: 500; }
+    .bulk-cp { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid #e8e4de; align-items: center; }
+    .bulk-cp:last-child { border-bottom: none; }
+    .bulk-cp-time { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: #4A9EA6; font-weight: 600; flex-shrink: 0; width: 72px; }
+    .bulk-cp-name { flex: 1; font-size: 12px; color: #5a554f; font-weight: 300; }
+    .bulk-cp-tick { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #d6d0c8; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
+    .bulk-cp.done .bulk-cp-tick { background: #5cb85c; border-color: #5cb85c; color: #fff; }
+    .bulk-cp.done .bulk-cp-time, .bulk-cp.done .bulk-cp-name { opacity: 0.45; }
+    .bulk-ref-table { width: 100%; border-collapse: collapse; }
+    .bulk-ref-table th { font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #9a9590; padding: 6px 4px; text-align: left; border-bottom: 1px solid #d6d0c8; }
+    .bulk-ref-table td { font-size: 12px; color: #5a554f; font-weight: 300; padding: 7px 4px; border-bottom: 1px solid #e8e4de; }
+    .bulk-ref-table tr:last-child td { border-bottom: none; }
+    .bulk-ref-table td:first-child { font-weight: 500; color: #1C1C1A; }
+    .bulk-done-note { background: rgba(92,184,92,0.1); border: 1px solid rgba(92,184,92,0.35); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #3a7a3a; font-weight: 400; margin-bottom: 12px; display: none; }
 
     /* SAMSUNG BROWSER BANNER */
     .browser-banner {
@@ -263,6 +326,7 @@
     <div class="tab active" data-tab="recipes">Recipes</div>
     <div class="tab" data-tab="calculator">Calculator</div>
     <div class="tab" data-tab="scale">Scale</div>
+    <div class="tab" data-tab="bulk">Bulk</div>
   </div>
 
   <div class="content">
@@ -336,7 +400,7 @@
     <div class="screen" id="screen-scale">
       <div class="eyebrow">Batch scaling</div>
       <div class="screen-heading">Scale a Recipe</div>
-      <select class="scale-recipe-select" id="scaleSelect"><option value="">— Select a recipe —</option></select>
+      <select class="scale-recipe-select" id="scaleSelect"><option value="">Select a recipe</option></select>
       <div class="loaf-counter">
         <div class="loaf-label">Number of loaves</div>
         <div class="loaf-controls">
@@ -346,6 +410,84 @@
         </div>
       </div>
       <div class="scale-results" id="scaleResults"><div class="scale-empty">Select a recipe above to scale it up</div></div>
+    </div>
+
+    <!-- BULK TIMER TAB -->
+    <div class="screen" id="screen-bulk">
+      <div class="eyebrow">Bulk fermentation</div>
+      <div class="screen-heading">Bulk Timer</div>
+      <div class="bulk-done-note" id="bulkDoneNote"></div>
+
+      <div id="bulkSetup">
+        <div class="bulk-card">
+          <div class="bulk-card-title">Your Dough</div>
+          <div class="form-group">
+            <label class="form-label">Recipe (optional)</label>
+            <select class="scale-recipe-select" id="bulkRecipeSelect"><option value="">No recipe, enter manually</option></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Dough temp</label><input class="form-input" type="number" id="bulkDoughTemp" placeholder="e.g. 25" /></div>
+            <div class="form-group"><label class="form-label">Ambient temp</label><input class="form-input" type="number" id="bulkAmbientTemp" placeholder="e.g. 23" /></div>
+          </div>
+          <div class="bulk-temp-toggle-row">
+            <div class="bulk-temp-toggle">
+              <button class="bulk-temp-btn active" id="bulkTempC" type="button">&deg;C</button>
+              <button class="bulk-temp-btn" id="bulkTempF" type="button">&deg;F</button>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Starter %</label><input class="form-input" type="number" id="bulkStarterPct" placeholder="e.g. 20" /></div>
+            <div class="form-group"><label class="form-label">Flour type</label>
+              <select class="form-input" id="bulkFlourType">
+                <option value="bread">Bread flour</option>
+                <option value="ap">All-purpose / plain</option>
+                <option value="wholemeal">Wholemeal</option>
+                <option value="rye">Rye</option>
+                <option value="spelt">Spelt</option>
+                <option value="einkorn">Einkorn</option>
+              </select>
+            </div>
+          </div>
+          <p class="bulk-hint">Measure dough temp at the centre with a probe thermometer after mixing. Picking a recipe fills in your starter % automatically.</p>
+        </div>
+        <button class="btn-primary" id="bulkCalcBtn">Calculate my window</button>
+      </div>
+
+      <div id="bulkResult" style="display:none;">
+        <div class="bulk-dark-card">
+          <div class="bulk-dark-title">Estimated Bulk Window</div>
+          <div class="bulk-window-row"><span class="bulk-window-val" id="bulkWindowRange">0</span><span class="bulk-window-unit">hours</span></div>
+          <div class="bulk-rise-row">
+            <div class="bulk-rise-lbl">Target rise at your temp</div>
+            <div class="bulk-rise-val" id="bulkTargetRise">0%</div>
+          </div>
+          <div class="bulk-disclaimer">A guide only. Trust the dough over the clock: look for your target rise, a domed surface, bubbles around the edges, and a jiggly, aerated feel.</div>
+        </div>
+        <button class="btn-primary" id="bulkStartBtn">Start bulk timer</button>
+      </div>
+
+      <div id="bulkRunning" style="display:none;">
+        <div class="bulk-timer-card">
+          <div class="bulk-timer-elapsed" id="bulkElapsed">0:00:00</div>
+          <div class="bulk-timer-lbl" id="bulkStatusLbl">elapsed</div>
+          <div class="bulk-progress"><div class="bulk-progress-fill" id="bulkProgressFill"></div></div>
+          <div class="bulk-window-labels"><span>Start</span><span id="bulkMidLbl"></span><span id="bulkEndLbl"></span></div>
+          <div class="bulk-rise-reminder" id="bulkRiseReminder"></div>
+        </div>
+        <div class="bulk-card">
+          <div class="bulk-card-title">Checkpoints</div>
+          <div id="bulkCheckpoints"></div>
+          <p class="bulk-hint" style="margin-top:10px;">The timer keeps perfect time even if you lock your phone or close the app. Set a phone alarm for the times above so you never miss a check.</p>
+        </div>
+        <button class="btn-primary" id="bulkEndBtn" style="background:#5cb85c;">End bulk, time to shape</button>
+        <button class="btn-secondary" id="bulkCancelBtn">Cancel timer</button>
+      </div>
+
+      <div class="bulk-card" style="margin-top:4px;">
+        <div class="bulk-card-title">Temp Reference Guide</div>
+        <p class="bulk-hint" style="margin-bottom:10px;">Generated from the starter % and flour type above. Warmer dough gets cut off at a lower rise because fermentation keeps going through shaping and the cold retard.</p>
+        <table class="bulk-ref-table" id="bulkRefTable"></table>
+      </div>
     </div>
 
   </div>
@@ -363,20 +505,29 @@
         <button class="modal-close" id="closeRecipeModal">×</button>
       </div>
       <div class="form-group"><label class="form-label">Recipe name</label><input class="form-input" type="text" id="rName" placeholder="e.g. Country Sourdough" /></div>
+      <div class="form-group">
+        <label class="form-label">Flour blend</label>
+        <div class="flour-blend-list" id="flourBlendList"></div>
+        <div class="flour-total-bar">
+          <span class="flour-total-lbl">Total flour</span>
+          <span class="flour-total-val" id="flourTotalDisplay">0 g</span>
+        </div>
+        <button class="add-flour-btn" id="addFlourBtn">+ Add another flour</button>
+        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:6px;">Add each flour type separately; the total is used for all hydration calculations.</p>
+      </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Flour (g)</label><input class="form-input" type="number" id="rFlour" placeholder="500" /></div>
         <div class="form-group"><label class="form-label">Water (g)</label><input class="form-input" type="number" id="rWater" placeholder="375" /></div>
+        <div class="form-group"><label class="form-label">Salt (g)</label><input class="form-input" type="number" id="rSalt" placeholder="10" /></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Starter (g)</label><input class="form-input" type="number" id="rStarter" placeholder="100" /></div>
         <div class="form-group"><label class="form-label">Starter hydration %</label><input class="form-input" type="number" id="rStarterHyd" placeholder="100" /></div>
       </div>
-      <div class="form-group"><label class="form-label">Salt (g)</label><input class="form-input" type="number" id="rSalt" placeholder="10" /></div>
       <div class="form-group">
         <label class="form-label">Inclusions (optional)</label>
         <div class="inclusions-list" id="inclusionsList"></div>
         <button class="add-inclusion-btn" id="addInclusionBtn">+ Add inclusion</button>
-        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:10px;">Inclusions (seeds, nuts, dried fruit, honey, olive oil or anything else) are not included in the hydration calculation. Each affects your dough differently, so treat the hydration % as a guide for your base dough only.</p>
+        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:10px;">Tap "affects hydration" on wet inclusions like honey or maple syrup to factor their water content into your hydration %. Dry inclusions (seeds, nuts, cheese etc.) don't affect hydration. Water content values sourced from the <a href="https://www.foodstandards.gov.au/science-data/food-nutrient-databases/afcd" target="_blank" style="color:#4A9EA6;">Australian Food Composition Database (FSANZ)</a>.</p>
       </div>
       <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="rNotes" placeholder="Any notes about this recipe..."></textarea></div>
       <div class="form-group">
@@ -433,17 +584,17 @@
         <button class="modal-close" id="closeUpgradeModal">×</button>
       </div>
       <ul class="upgrade-features">
-        <li>Unlimited recipes — no more 3 recipe limit</li>
-        <li>Cloud sync — access recipes on any device</li>
+        <li>Unlimited recipes, no more 3 recipe limit</li>
+        <li>Cloud sync, access recipes on any device</li>
         <li>Full bake history per recipe</li>
         <li>Inclusions tracker with batch scaling</li>
         <li>Never lose your recipes</li>
       </ul>
       <div class="upgrade-price">
         <div class="upgrade-amount"><span class="upgrade-currency">$</span>XX</div>
-        <div class="upgrade-period">One-off purchase — yours forever</div>
+        <div class="upgrade-period">One-off purchase, yours forever</div>
       </div>
-      <button class="btn-primary" id="buyPremiumBtn">Get Premium — coming soon</button>
+      <button class="btn-primary" id="buyPremiumBtn">Get Premium (coming soon)</button>
       <div class="upgrade-note">Sign up at hoodyssourdoughkitchen.com.au to be first to know when it launches</div>
     </div>
   </div>
@@ -460,7 +611,7 @@
       <div class="cook-step-title" id="cookStepTitle"></div>
       <div class="cook-step-body" id="cookStepBody"></div>
       <div class="cook-checklist" id="cookChecklist" style="display:none;">
-        <div class="cook-checklist-title">⚖️ Ingredients — tap to check off</div>
+        <div class="cook-checklist-title">⚖️ Ingredients: tap to check off</div>
         <div id="cookChecklistItems"></div>
         <button class="cook-checklist-reset" id="cookChecklistReset">Reset all</button>
       </div>
@@ -477,7 +628,7 @@
             <button class="cook-preset-pill" data-mins="120">2h</button>
             <button class="cook-preset-pill" data-mins="240">4h</button>
           </div>
-          <!-- Inline edit row — shown when user taps the time display -->
+          <!-- Inline edit row, shown when user taps the time display -->
           <div class="cook-timer-input-row" id="cookTimerInputRow" style="display:none;">
             <input class="cook-timer-input" type="number" id="cookTimerMins" placeholder="0" min="0" max="999" />
             <div class="cook-timer-sep">:</div>
@@ -576,17 +727,17 @@
         ? ' Add inclusions: ' + r.inclusions.map(function(i) { return i.qty + 'g ' + i.name; }).join(', ') + '.'
         : '';
 
-      steps.push({ title: 'Feed your starter', body: 'Make sure your starter is active and bubbly before you begin. It should have peaked and be full of bubbles — the float test can help confirm it\'s ready.', mins: 0 });
+      steps.push({ title: 'Feed your starter', body: 'Make sure your starter is active and bubbly before you begin. It should have peaked, with a domed top, bubbles throughout, and a jiggly texture.', mins: 0 });
       steps.push({ title: 'Autolyse', body: 'Mix ' + totalFlour + 'g flour with ' + totalWater + 'g water until no dry flour remains. Cover and rest to hydrate the flour fully.', mins: 30 });
       steps.push({ title: 'Add starter', body: 'Add ' + (r.starter || 0) + 'g of active starter to your dough. Squeeze and fold it in until fully incorporated.', mins: 0 });
       steps.push({ title: 'Add salt', body: 'Sprinkle ' + (r.salt || 0) + 'g salt over the dough with a splash of water to help dissolve it. Fold it in thoroughly.' + inclText, mins: 0 });
-      steps.push({ title: 'Stretch & fold — Round 1', body: 'With wet hands, perform a set of stretch and folds: stretch the dough up and fold it over itself, rotating the bowl 90° each time. Do 4 folds total.', mins: 30 });
-      steps.push({ title: 'Stretch & fold — Round 2', body: 'Perform another set of stretch and folds. The dough should be starting to feel stronger and more elastic.', mins: 30 });
-      steps.push({ title: 'Stretch & fold — Round 3', body: 'Third set of stretch and folds. You can also try coil folds at this stage if you prefer.', mins: 30 });
-      steps.push({ title: 'Stretch & fold — Round 4', body: 'Final set of folds. After this, leave the dough to bulk ferment undisturbed.', mins: 0 });
+      steps.push({ title: 'Stretch & fold: Round 1', body: 'With wet hands, perform a set of stretch and folds: stretch the dough up and fold it over itself, rotating the bowl 90° each time. Do 4 folds total.', mins: 30 });
+      steps.push({ title: 'Stretch & fold: Round 2', body: 'Perform another set of stretch and folds. The dough should be starting to feel stronger and more elastic.', mins: 30 });
+      steps.push({ title: 'Stretch & fold: Round 3', body: 'Third set of stretch and folds. You can also try coil folds at this stage if you prefer.', mins: 30 });
+      steps.push({ title: 'Stretch & fold: Round 4', body: 'Final set of folds. After this, leave the dough to bulk ferment undisturbed.', mins: 0 });
       steps.push({ title: 'Bulk fermentation', body: 'Cover the dough and leave at room temperature to bulk ferment. Look for a 50–75% rise with a domed top and bubbles around the edges. Time varies with temperature.', mins: 240 });
       steps.push({ title: 'Pre-shape', body: 'Turn the dough out onto an unfloured surface. Use a bench scraper to fold and pre-shape into a rough round. Let it rest uncovered.', mins: 20 });
-      steps.push({ title: 'Final shape', body: 'Shape the dough into your desired form — batard or boule. Build tension by dragging the dough towards you on the bench. Place seam-side up into a floured banneton.', mins: 0 });
+      steps.push({ title: 'Final shape', body: 'Shape the dough into your desired form, batard or boule. Build tension by dragging the dough towards you on the bench. Place seam-side up into a floured banneton.', mins: 0 });
       steps.push({ title: 'Cold proof', body: 'Cover and refrigerate overnight (8–16 hours). Cold proofing develops flavour and makes scoring easier.', mins: 0 });
       steps.push({ title: 'Preheat oven & Dutch oven', body: 'Preheat your oven and Dutch oven to 250°C (480°F). Allow at least 45 minutes for it to fully heat through.', mins: 45 });
       steps.push({ title: 'Score & bake (lid on)', body: 'Turn your dough out, score with a sharp lame or razor. Carefully lower into the hot Dutch oven, replace the lid, and bake.', mins: 20 });
@@ -660,7 +811,12 @@
 
     function buildChecklist(r) {
       const items = [];
-      if (r.flour) items.push({ label: 'Flour', val: r.flour + 'g' });
+      // Flour blend
+      if (r.flourBlend && r.flourBlend.length) {
+        r.flourBlend.forEach(function(f) { if (f.name) items.push({ label: f.name, val: f.qty + 'g' }); });
+      } else if (r.flour) {
+        items.push({ label: 'Flour', val: r.flour + 'g' });
+      }
       if (r.water) items.push({ label: 'Water', val: r.water + 'g' });
       if (r.starter) items.push({ label: 'Starter', val: r.starter + 'g' });
       if (r.salt) items.push({ label: 'Salt', val: r.salt + 'g' });
@@ -730,7 +886,7 @@
           '<div class="cook-no-steps">' +
           '<div style="font-size:48px;margin-bottom:1rem;">🍞</div>' +
           '<strong style="color:#F0EDE8;font-family:\'Cormorant Garamond\',serif;font-size:24px;">No steps yet</strong>' +
-          '<p style="margin-top:0.75rem;">Edit this recipe and add cook mode steps — or use the auto-generate button to create a full sourdough guide.</p>' +
+          '<p style="margin-top:0.75rem;">Edit this recipe and add cook mode steps, or use the auto-generate button to create a full sourdough guide.</p>' +
           '</div>';
         document.getElementById('cookProgressFill').style.width = '0%';
         document.getElementById('cookPrevBtn').disabled = true;
@@ -924,7 +1080,12 @@
       const sf = (r.starter || 0) / (1 + sh);
       const sw = (r.starter || 0) - sf;
       const tf = (r.flour || 0) + sf;
-      const tw = (r.water || 0) + sw;
+      // Add water from wet inclusions
+      const wetWater = (r.inclusions || []).reduce(function(sum, inc) {
+        if (inc.isWet && inc.waterPct > 0) return sum + ((inc.qty || 0) * inc.waterPct / 100);
+        return sum;
+      }, 0);
+      const tw = (r.water || 0) + sw + wetWater;
       if (!tf) return 0;
       return Math.round((tw / tf) * 100);
     }
@@ -940,6 +1101,7 @@
       document.getElementById('screen-' + name).classList.add('active');
       if (name === 'scale') refreshScaleSelect();
       if (name === 'recipes') renderRecipes();
+      if (name === 'bulk') refreshBulkSelect();
       trackEvent('tab_viewed', { tab_name: name });
     });
 
@@ -1002,7 +1164,7 @@
       editingRecipeId = null;
       document.getElementById('recipeModalTitle').textContent = 'New recipe';
       document.getElementById('rName').value = '';
-      document.getElementById('rFlour').value = '';
+      initFlourBlend(null);
       document.getElementById('rWater').value = '';
       document.getElementById('rStarter').value = '';
       document.getElementById('rStarterHyd').value = '100';
@@ -1030,8 +1192,17 @@
       const detailPhoto = document.getElementById('detailPhoto');
       detailPhoto.src = r.photo || DEFAULT_RECIPE_PHOTO;
       detailPhoto.style.display = 'block';
+
+      // Build flour blend display
+      const flourRows = (r.flourBlend && r.flourBlend.length)
+        ? r.flourBlend.map(function(f) {
+            return '<div class="ingredient-row"><div class="ingredient-name">' + f.name + '</div><div class="ingredient-val">' + f.qty + ' g</div></div>';
+          }).join('') +
+          (r.flourBlend.length > 1 ? '<div class="ingredient-row" style="opacity:0.6;"><div class="ingredient-name">Total flour</div><div class="ingredient-val">' + (r.flour || 0) + ' g</div></div>' : '')
+        : '<div class="ingredient-row"><div class="ingredient-name">Flour</div><div class="ingredient-val">' + (r.flour || 0) + ' g</div></div>';
+
       document.getElementById('detailIngredients').innerHTML =
-        '<div class="ingredient-row"><div class="ingredient-name">Flour</div><div class="ingredient-val">' + (r.flour || 0) + ' g</div></div>' +
+        flourRows +
         '<div class="ingredient-row"><div class="ingredient-name">Water</div><div class="ingredient-val">' + (r.water || 0) + ' g</div></div>' +
         '<div class="ingredient-row"><div class="ingredient-name">Starter</div><div class="ingredient-val">' + (r.starter || 0) + ' g</div></div>' +
         '<div class="ingredient-row"><div class="ingredient-name">Salt</div><div class="ingredient-val">' + (r.salt || 0) + ' g</div></div>';
@@ -1040,7 +1211,10 @@
       if (r.inclusions && r.inclusions.length > 0) {
         inclSection.style.display = 'block';
         document.getElementById('detailInclusions').innerHTML = r.inclusions.map(function(inc) {
-          return '<div class="ingredient-row"><div class="ingredient-name">' + inc.name + '</div><div class="ingredient-val">' + inc.qty + ' g</div></div>';
+          const wetNote = inc.isWet && inc.waterPct > 0
+            ? ' <span style="font-size:10px;color:#4A9EA6;">(' + inc.waterPct + '% water)</span>'
+            : '';
+          return '<div class="ingredient-row"><div class="ingredient-name">' + inc.name + wetNote + '</div><div class="ingredient-val">' + inc.qty + ' g</div></div>';
         }).join('');
       } else {
         inclSection.style.display = 'none';
@@ -1081,14 +1255,15 @@
       editingRecipeId = r.id;
       document.getElementById('recipeModalTitle').textContent = 'Edit recipe';
       document.getElementById('rName').value = r.name;
-      document.getElementById('rFlour').value = r.flour;
+      // Flour blend
+      initFlourBlend(r.flourBlend && r.flourBlend.length ? r.flourBlend : [{ name: 'Bread flour', qty: r.flour || 0 }]);
       document.getElementById('rWater').value = r.water;
       document.getElementById('rStarter').value = r.starter;
       document.getElementById('rStarterHyd').value = r.starterHyd || 100;
       document.getElementById('rSalt').value = r.salt;
       document.getElementById('rNotes').value = r.notes || '';
       document.getElementById('inclusionsList').innerHTML = '';
-      (r.inclusions || []).forEach(function(inc) { addInclusionRow(inc.name, inc.qty); });
+      (r.inclusions || []).forEach(function(inc) { addInclusionRow(inc.name, inc.qty, inc.isWet, inc.waterPct); });
       document.getElementById('stepsList').innerHTML = '';
       (r.steps || []).forEach(function(s) { addStepRow(s.title, s.body, s.mins || ''); });
       // Photo
@@ -1116,17 +1291,15 @@
     document.getElementById('saveRecipeBtn').addEventListener('click', function() {
       const name = document.getElementById('rName').value.trim();
       if (!name) { alert('Please enter a recipe name'); return; }
-      const inclusions = [];
-      document.querySelectorAll('#inclusionsList .inclusion-row').forEach(function(row) {
-        const inputs = row.querySelectorAll('input');
-        const n = inputs[0].value.trim();
-        const q = parseFloat(inputs[1].value) || 0;
-        if (n) inclusions.push({ name: n, qty: q });
-      });
+      const flourBlend = getFlourBlendFromForm();
+      const totalFlour = getTotalFlourFromBlend(flourBlend);
+      if (totalFlour <= 0) { alert('Please add at least one flour with a quantity'); return; }
+      const inclusions = getInclusionsFromForm();
       const recipe = {
         id: editingRecipeId || Date.now().toString(),
         name: name,
-        flour: parseFloat(document.getElementById('rFlour').value) || 0,
+        flourBlend: flourBlend,
+        flour: totalFlour,
         water: parseFloat(document.getElementById('rWater').value) || 0,
         starter: parseFloat(document.getElementById('rStarter').value) || 0,
         starterHyd: parseFloat(document.getElementById('rStarterHyd').value) || 100,
@@ -1164,12 +1337,139 @@
 
     // ADD INCLUSION ROW
     document.getElementById('addInclusionBtn').addEventListener('click', function() { addInclusionRow(); });
-    function addInclusionRow(name, qty) {
+
+    // AFCD water content presets (source: Australian Food Composition Database, FSANZ)
+    const WET_PRESETS = {
+      'Honey': 17,
+      'Maple syrup': 32,
+      'Molasses': 22,
+      'Miso': 43,
+      'Olive oil': 0,
+      'Custom': null
+    };
+
+    function addInclusionRow(name, qty, isWet, waterPct) {
+      const wrap = document.createElement('div');
+      wrap.className = 'inclusion-row-wrap';
+
       const row = document.createElement('div');
       row.className = 'inclusion-row';
-      row.innerHTML = '<input class="form-input inclusion-name" type="text" placeholder="e.g. Walnuts" value="' + (name || '') + '" /><input class="form-input inclusion-qty" type="number" placeholder="g" value="' + (qty || '') + '" /><button class="remove-btn">×</button>';
-      row.querySelector('.remove-btn').addEventListener('click', function() { row.remove(); });
-      document.getElementById('inclusionsList').appendChild(row);
+      row.innerHTML =
+        '<input class="form-input inclusion-name" type="text" placeholder="e.g. Walnuts" value="' + (name || '') + '" />' +
+        '<input class="form-input inclusion-qty" type="number" placeholder="g" value="' + (qty || '') + '" style="width:80px;flex-shrink:0;" />' +
+        '<div class="inclusion-wet-toggle js-wet-toggle"><div class="wet-check' + (isWet ? ' on' : '') + '">✓</div><span>hydration</span></div>' +
+        '<button class="remove-btn">×</button>';
+
+      const wetRow = document.createElement('div');
+      wetRow.className = 'inclusion-wet-row';
+      wetRow.style.display = isWet ? 'flex' : 'none';
+
+      // Build preset select
+      const presetOptions = Object.keys(WET_PRESETS).map(function(k) {
+        return '<option value="' + k + '">' + k + (WET_PRESETS[k] !== null ? ' (' + WET_PRESETS[k] + '% water)' : '') + '</option>';
+      }).join('');
+      wetRow.innerHTML =
+        '<span class="inclusion-wet-lbl">Water content:</span>' +
+        '<select class="inclusion-wet-select js-wet-preset">' + presetOptions + '</select>' +
+        '<input class="inclusion-wet-pct js-wet-pct" type="number" placeholder="%" min="0" max="100" value="' + (waterPct || '') + '" />' +
+        '<span style="font-size:10px;color:#9a9590;">%</span>';
+
+      wrap.appendChild(row);
+      wrap.appendChild(wetRow);
+      document.getElementById('inclusionsList').appendChild(wrap);
+
+      // Toggle wet row
+      row.querySelector('.js-wet-toggle').addEventListener('click', function() {
+        const check = this.querySelector('.wet-check');
+        const on = check.classList.toggle('on');
+        wetRow.style.display = on ? 'flex' : 'none';
+        if (on && !wetRow.querySelector('.js-wet-pct').value) {
+          wetRow.querySelector('.js-wet-pct').value = 0;
+        }
+      });
+
+      // Preset select changes pct
+      wetRow.querySelector('.js-wet-preset').addEventListener('change', function() {
+        const key = this.value;
+        const pct = WET_PRESETS[key];
+        if (pct !== null) wetRow.querySelector('.js-wet-pct').value = pct;
+      });
+
+      // Set initial preset if loading saved data
+      if (isWet && name) {
+        const sel = wetRow.querySelector('.js-wet-preset');
+        const matchKey = Object.keys(WET_PRESETS).find(function(k) { return k.toLowerCase() === (name || '').toLowerCase(); });
+        if (matchKey) sel.value = matchKey;
+        if (waterPct !== undefined) wetRow.querySelector('.js-wet-pct').value = waterPct;
+      }
+
+      row.querySelector('.remove-btn').addEventListener('click', function() { wrap.remove(); });
+    }
+
+    function getInclusionsFromForm() {
+      const inclusions = [];
+      document.querySelectorAll('#inclusionsList .inclusion-row-wrap').forEach(function(wrap) {
+        const row = wrap.querySelector('.inclusion-row');
+        const n = row.querySelector('.inclusion-name').value.trim();
+        const q = parseFloat(row.querySelector('.inclusion-qty').value) || 0;
+        const isWet = row.querySelector('.wet-check').classList.contains('on');
+        const waterPct = isWet ? (parseFloat(wrap.querySelector('.js-wet-pct').value) || 0) : 0;
+        if (n) inclusions.push({ name: n, qty: q, isWet: isWet, waterPct: waterPct });
+      });
+      return inclusions;
+    }
+
+    // FLOUR BLEND
+    function addFlourRow(name, qty) {
+      const list = document.getElementById('flourBlendList');
+      const row = document.createElement('div');
+      row.className = 'flour-row';
+      row.innerHTML =
+        '<input class="form-input" type="text" placeholder="e.g. Bread flour" value="' + (name || '') + '" style="flex:1;" />' +
+        '<input class="form-input flour-qty" type="number" placeholder="g" value="' + (qty || '') + '" style="width:90px;flex-shrink:0;" />' +
+        '<button class="remove-btn js-flour-remove">×</button>';
+      row.querySelector('.js-flour-remove').addEventListener('click', function() {
+        row.remove();
+        updateFlourTotal();
+      });
+      row.querySelector('.flour-qty').addEventListener('input', updateFlourTotal);
+      list.appendChild(row);
+      updateFlourTotal();
+    }
+
+    function updateFlourTotal() {
+      let total = 0;
+      document.querySelectorAll('#flourBlendList .flour-qty').forEach(function(inp) {
+        total += parseFloat(inp.value) || 0;
+      });
+      document.getElementById('flourTotalDisplay').textContent = total + ' g';
+      return total;
+    }
+
+    function getFlourBlendFromForm() {
+      const blend = [];
+      document.querySelectorAll('#flourBlendList .flour-row').forEach(function(row) {
+        const name = row.querySelector('input[type="text"]').value.trim();
+        const qty = parseFloat(row.querySelector('.flour-qty').value) || 0;
+        if (name && qty > 0) blend.push({ name: name, qty: qty });
+      });
+      return blend;
+    }
+
+    function getTotalFlourFromBlend(blend) {
+      return (blend || []).reduce(function(sum, f) { return sum + (f.qty || 0); }, 0);
+    }
+
+    document.getElementById('addFlourBtn').addEventListener('click', function() { addFlourRow(); });
+
+    // Init with one flour row on new recipe
+    function initFlourBlend(blend) {
+      document.getElementById('flourBlendList').innerHTML = '';
+      if (blend && blend.length) {
+        blend.forEach(function(f) { addFlourRow(f.name, f.qty); });
+      } else {
+        addFlourRow('Bread flour', '');
+      }
     }
 
     // CALCULATOR
@@ -1220,7 +1520,7 @@
     function refreshScaleSelect() {
       const sel = document.getElementById('scaleSelect');
       const current = sel.value;
-      sel.innerHTML = '<option value="">— Select a recipe —</option>';
+      sel.innerHTML = '<option value="">Select a recipe</option>';
       getRecipes().forEach(function(r) {
         sel.innerHTML += '<option value="' + r.id + '">' + r.name + '</option>';
       });
@@ -1241,10 +1541,25 @@
       const sf = (r.starter || 0) / (1 + sh);
       const sw = (r.starter || 0) - sf;
       const tf = (r.flour || 0) + sf;
-      const tw = (r.water || 0) + sw;
+      const wetWater = (r.inclusions || []).reduce(function(sum, inc) {
+        return inc.isWet && inc.waterPct > 0 ? sum + ((inc.qty || 0) * inc.waterPct / 100) : sum;
+      }, 0);
+      const tw = (r.water || 0) + sw + wetWater;
       const hyd = tf ? Math.round((tw / tf) * 100) : 0;
-      let html = [
-        ['Flour', Math.round(r.flour * m)],
+
+      // Flour blend rows
+      let html = '';
+      if (r.flourBlend && r.flourBlend.length) {
+        r.flourBlend.forEach(function(f) {
+          html += '<div class="scale-row-item"><div class="scale-row-name">' + f.name + '</div><div class="scale-row-val">' + Math.round(f.qty * m) + ' g</div></div>';
+        });
+        if (r.flourBlend.length > 1) {
+          html += '<div class="scale-row-item" style="opacity:0.6;"><div class="scale-row-name">Total flour</div><div class="scale-row-val">' + Math.round((r.flour || 0) * m) + ' g</div></div>';
+        }
+      } else {
+        html += '<div class="scale-row-item"><div class="scale-row-name">Flour</div><div class="scale-row-val">' + Math.round((r.flour || 0) * m) + ' g</div></div>';
+      }
+      html += [
         ['Water', Math.round(r.water * m)],
         ['Starter', Math.round((r.starter || 0) * m)],
         ['Salt', Math.round((r.salt || 0) * m)]
@@ -1252,7 +1567,8 @@
         return '<div class="scale-row-item"><div class="scale-row-name">' + item[0] + '</div><div class="scale-row-val">' + item[1] + ' g</div></div>';
       }).join('');
       (r.inclusions || []).forEach(function(inc) {
-        html += '<div class="scale-row-item"><div class="scale-row-name">' + inc.name + '</div><div class="scale-row-val">' + Math.round(inc.qty * m) + ' g</div></div>';
+        const wetNote = inc.isWet && inc.waterPct > 0 ? ' <span style="font-size:10px;color:#4A9EA6;">(' + inc.waterPct + '% water)</span>' : '';
+        html += '<div class="scale-row-item"><div class="scale-row-name">' + inc.name + wetNote + '</div><div class="scale-row-val">' + Math.round(inc.qty * m) + ' g</div></div>';
       });
       html += '<div class="scale-row-item" style="background:#e8f4f5;border-color:rgba(74,158,166,0.3);"><div class="scale-row-name" style="color:#4A9EA6;">Hydration</div><div class="scale-row-val" style="color:#4A9EA6;">' + hyd + '%</div></div>';
       results.innerHTML = html;
@@ -1295,6 +1611,268 @@
       document.getElementById('upgradeModal').classList.remove('open');
     });
 
+    // BULK FERMENT TIMER
+    const BULK_FLOUR_MULT = { ap: 1.05, bread: 1.0, wholemeal: 0.82, rye: 0.70, spelt: 0.88, einkorn: 0.95 };
+    let bulkTempUnit = 'C';
+    let bulkTickInterval = null;
+    let bulkLastCalc = null;
+
+    function bulkToC(v) { return bulkTempUnit === 'F' ? (v - 32) * 5 / 9 : v; }
+
+    function bulkWindow(doughTempC, ambientTempC, starterPct, flourType) {
+      const baseTime = 4.5;
+      const dDiff = doughTempC - 24;
+      const dMult = dDiff >= 0 ? Math.pow(0.91, dDiff) : Math.pow(1.12, Math.abs(dDiff));
+      const aDiff = ambientTempC - 24;
+      const aMult = aDiff >= 0 ? Math.pow(0.97, aDiff) : Math.pow(1.04, Math.abs(aDiff));
+      const sMult = Math.pow(20 / Math.max(1, starterPct), 0.35);
+      const fMult = BULK_FLOUR_MULT[flourType] || 1.0;
+      const mid = baseTime * dMult * aMult * sMult * fMult;
+      const low = Math.max(0.5, mid * 0.78);
+      const high = mid * 1.28;
+      return {
+        low: Math.round(low * 4) / 4,
+        mid: Math.round(mid * 4) / 4,
+        high: Math.round(high * 4) / 4,
+        midSecs: Math.round(mid * 3600),
+        highSecs: Math.round(high * 3600)
+      };
+    }
+
+    function bulkTargetRise(doughTempC) {
+      if (doughTempC >= 27) return '30 to 40%';
+      if (doughTempC >= 25) return '40 to 50%';
+      if (doughTempC >= 23) return '50 to 60%';
+      if (doughTempC >= 21) return '60 to 75%';
+      if (doughTempC >= 19) return '75 to 90%';
+      return '90 to 100%';
+    }
+
+    function bulkFmtHMS(secs) {
+      secs = Math.max(0, Math.floor(secs));
+      const h = Math.floor(secs / 3600);
+      const m = Math.floor((secs % 3600) / 60);
+      const s = secs % 60;
+      return h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+    function bulkFmtDur(secs) {
+      const h = Math.floor(secs / 3600);
+      const m = Math.round((secs % 3600) / 60);
+      if (h === 0) return m + 'm';
+      if (m === 0) return h + 'h';
+      return h + 'h ' + m + 'm';
+    }
+    function bulkFmtClock(ts) {
+      const d = new Date(ts);
+      let h = d.getHours();
+      const m = d.getMinutes();
+      const ap = h >= 12 ? 'pm' : 'am';
+      h = h % 12; if (h === 0) h = 12;
+      return h + ':' + (m < 10 ? '0' : '') + m + ' ' + ap;
+    }
+
+    function refreshBulkSelect() {
+      const sel = document.getElementById('bulkRecipeSelect');
+      const current = sel.value;
+      sel.innerHTML = '<option value="">No recipe, enter manually</option>';
+      getRecipes().forEach(function(r) {
+        const opt = document.createElement('option');
+        opt.value = r.id;
+        opt.textContent = r.name;
+        sel.appendChild(opt);
+      });
+      sel.value = current;
+      renderBulkRefTable();
+    }
+
+    document.getElementById('bulkRecipeSelect').addEventListener('change', function() {
+      const r = getRecipes().find(function(x) { return x.id === document.getElementById('bulkRecipeSelect').value; });
+      if (r && r.flour > 0) {
+        document.getElementById('bulkStarterPct').value = Math.round(((r.starter || 0) / r.flour) * 100);
+        renderBulkRefTable();
+      }
+    });
+    document.getElementById('bulkStarterPct').addEventListener('input', renderBulkRefTable);
+    document.getElementById('bulkFlourType').addEventListener('change', renderBulkRefTable);
+
+    document.getElementById('bulkTempC').addEventListener('click', function() {
+      if (bulkTempUnit === 'F') {
+        ['bulkDoughTemp', 'bulkAmbientTemp'].forEach(function(id) {
+          const v = parseFloat(document.getElementById(id).value);
+          if (!isNaN(v)) document.getElementById(id).value = Math.round((v - 32) * 5 / 9 * 10) / 10;
+        });
+        bulkTempUnit = 'C';
+        document.getElementById('bulkTempC').classList.add('active');
+        document.getElementById('bulkTempF').classList.remove('active');
+        document.getElementById('bulkDoughTemp').placeholder = 'e.g. 25';
+        document.getElementById('bulkAmbientTemp').placeholder = 'e.g. 23';
+        renderBulkRefTable();
+      }
+    });
+    document.getElementById('bulkTempF').addEventListener('click', function() {
+      if (bulkTempUnit === 'C') {
+        ['bulkDoughTemp', 'bulkAmbientTemp'].forEach(function(id) {
+          const v = parseFloat(document.getElementById(id).value);
+          if (!isNaN(v)) document.getElementById(id).value = Math.round((v * 9 / 5 + 32) * 10) / 10;
+        });
+        bulkTempUnit = 'F';
+        document.getElementById('bulkTempF').classList.add('active');
+        document.getElementById('bulkTempC').classList.remove('active');
+        document.getElementById('bulkDoughTemp').placeholder = 'e.g. 77';
+        document.getElementById('bulkAmbientTemp').placeholder = 'e.g. 73';
+        renderBulkRefTable();
+      }
+    });
+
+    function renderBulkRefTable() {
+      const pct = parseFloat(document.getElementById('bulkStarterPct').value) || 20;
+      const flour = document.getElementById('bulkFlourType').value || 'bread';
+      let html = '<tr><th>Dough temp</th><th>Est. window</th><th>Target rise</th></tr>';
+      for (let t = 28; t >= 18; t--) {
+        const w = bulkWindow(t, t, pct, flour);
+        const tempLbl = bulkTempUnit === 'F' ? Math.round(t * 9 / 5 + 32) + '&deg;F' : t + '&deg;C';
+        html += '<tr><td>' + tempLbl + '</td><td>' + w.low + ' to ' + w.high + ' h</td><td>' + bulkTargetRise(t) + '</td></tr>';
+      }
+      document.getElementById('bulkRefTable').innerHTML = html;
+    }
+
+    document.getElementById('bulkCalcBtn').addEventListener('click', function() {
+      const doughRaw = parseFloat(document.getElementById('bulkDoughTemp').value);
+      const ambRaw = parseFloat(document.getElementById('bulkAmbientTemp').value);
+      const pct = parseFloat(document.getElementById('bulkStarterPct').value);
+      const flour = document.getElementById('bulkFlourType').value;
+      if (isNaN(doughRaw) || isNaN(ambRaw) || isNaN(pct)) {
+        alert('Please fill in dough temp, ambient temp and starter %.');
+        return;
+      }
+      const doughC = bulkToC(doughRaw);
+      const ambC = bulkToC(ambRaw);
+      const w = bulkWindow(doughC, ambC, pct, flour);
+      bulkLastCalc = {
+        midSecs: w.midSecs, highSecs: w.highSecs,
+        rise: bulkTargetRise(doughC),
+        tempLbl: doughRaw + '°' + bulkTempUnit
+      };
+      document.getElementById('bulkWindowRange').textContent = w.low + ' to ' + w.high;
+      document.getElementById('bulkTargetRise').textContent = bulkLastCalc.rise;
+      document.getElementById('bulkDoneNote').style.display = 'none';
+      document.getElementById('bulkResult').style.display = 'block';
+      document.getElementById('bulkResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      trackEvent('bulk_window_calculated', { dough_temp_c: Math.round(doughC) });
+    });
+
+    function bulkCheckpointList(s) {
+      return [
+        { secs: Math.round(s.midSecs * 0.25), name: 'Stretch and fold 1' },
+        { secs: Math.round(s.midSecs * 0.45), name: 'Stretch and fold 2' },
+        { secs: Math.round(s.midSecs * 0.60), name: 'Stretch and fold 3' },
+        { secs: Math.round(s.midSecs * 0.75), name: 'Final fold, then hands off' },
+        { secs: Math.round(s.midSecs * 0.85), name: 'First readiness check' },
+        { secs: s.midSecs, name: 'Early end of window' },
+        { secs: s.highSecs, name: 'Late end of window' }
+      ];
+    }
+
+    function bulkGetSession() {
+      try { return JSON.parse(localStorage.getItem('twl_bulk') || 'null'); } catch (e) { return null; }
+    }
+
+    function bulkRenderRunning(s) {
+      document.getElementById('bulkSetup').style.display = 'none';
+      document.getElementById('bulkResult').style.display = 'none';
+      document.getElementById('bulkRunning').style.display = 'block';
+      document.getElementById('bulkMidLbl').textContent = bulkFmtClock(s.start + s.midSecs * 1000);
+      document.getElementById('bulkEndLbl').textContent = bulkFmtClock(s.start + s.highSecs * 1000);
+      document.getElementById('bulkRiseReminder').innerHTML =
+        'Started at ' + bulkFmtClock(s.start) + ' with dough at ' + s.tempLbl +
+        '. Look for a <strong>' + s.rise + ' rise</strong>, a domed top and bubbles at the edges.';
+      document.getElementById('bulkCheckpoints').innerHTML = bulkCheckpointList(s).map(function(cp, i) {
+        return '<div class="bulk-cp" data-secs="' + cp.secs + '">' +
+          '<div class="bulk-cp-time">' + bulkFmtClock(s.start + cp.secs * 1000) + '</div>' +
+          '<div class="bulk-cp-name">' + cp.name + '</div>' +
+          '<div class="bulk-cp-tick">&#10003;</div></div>';
+      }).join('');
+      bulkTick();
+      clearInterval(bulkTickInterval);
+      bulkTickInterval = setInterval(bulkTick, 1000);
+    }
+
+    function bulkTick() {
+      const s = bulkGetSession();
+      if (!s) { clearInterval(bulkTickInterval); return; }
+      const elapsed = (Date.now() - s.start) / 1000;
+      const el = document.getElementById('bulkElapsed');
+      el.textContent = bulkFmtHMS(elapsed);
+      const fill = document.getElementById('bulkProgressFill');
+      fill.style.width = Math.min(100, (elapsed / s.highSecs) * 100) + '%';
+      const lbl = document.getElementById('bulkStatusLbl');
+      if (elapsed >= s.highSecs) {
+        el.className = 'bulk-timer-elapsed past-window';
+        fill.classList.add('past');
+        lbl.textContent = 'Past the estimated window, trust your dough';
+      } else if (elapsed >= s.midSecs) {
+        el.className = 'bulk-timer-elapsed in-window';
+        fill.classList.remove('past');
+        lbl.textContent = 'In the window, check for your target rise';
+      } else {
+        el.className = 'bulk-timer-elapsed';
+        fill.classList.remove('past');
+        lbl.textContent = bulkFmtDur(s.midSecs - elapsed) + ' until the early window';
+      }
+      document.querySelectorAll('#bulkCheckpoints .bulk-cp').forEach(function(cp) {
+        cp.classList.toggle('done', elapsed >= parseFloat(cp.dataset.secs));
+      });
+    }
+
+    document.getElementById('bulkStartBtn').addEventListener('click', function() {
+      if (!bulkLastCalc) return;
+      const session = {
+        start: Date.now(),
+        midSecs: bulkLastCalc.midSecs,
+        highSecs: bulkLastCalc.highSecs,
+        rise: bulkLastCalc.rise,
+        tempLbl: bulkLastCalc.tempLbl
+      };
+      localStorage.setItem('twl_bulk', JSON.stringify(session));
+      trackEvent('bulk_timer_started');
+      bulkRenderRunning(session);
+    });
+
+    function bulkReset(noteText) {
+      clearInterval(bulkTickInterval);
+      localStorage.removeItem('twl_bulk');
+      document.getElementById('bulkRunning').style.display = 'none';
+      document.getElementById('bulkResult').style.display = 'none';
+      document.getElementById('bulkSetup').style.display = 'block';
+      const note = document.getElementById('bulkDoneNote');
+      if (noteText) { note.textContent = noteText; note.style.display = 'block'; }
+      else { note.style.display = 'none'; }
+    }
+
+    document.getElementById('bulkEndBtn').addEventListener('click', function() {
+      const s = bulkGetSession();
+      if (!s) return;
+      if (!confirm('End bulk fermentation?')) return;
+      const totalSecs = Math.round((Date.now() - s.start) / 1000);
+      trackEvent('bulk_timer_completed', { total_mins: Math.round(totalSecs / 60) });
+      bulkReset('Bulk complete in ' + bulkFmtDur(totalSecs) + '. Time to shape!');
+    });
+
+    document.getElementById('bulkCancelBtn').addEventListener('click', function() {
+      if (!confirm('Cancel the bulk timer? Your start time will be discarded.')) return;
+      trackEvent('bulk_timer_cancelled');
+      bulkReset(null);
+    });
+
+    function restoreBulkSession() {
+      const s = bulkGetSession();
+      if (s) bulkRenderRunning(s);
+    }
+
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden && bulkGetSession()) bulkTick();
+    });
+
     // SAMSUNG INTERNET DETECTION
     (function() {
       const ua = navigator.userAgent;
@@ -1312,6 +1890,8 @@
     // INIT
     renderRecipes();
     refreshScaleSelect();
+    refreshBulkSelect();
+    restoreBulkSession();
 
     // PWA SERVICE WORKER
     if ('serviceWorker' in navigator) {
