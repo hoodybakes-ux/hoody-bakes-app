@@ -671,7 +671,7 @@
     let loaves = 1;
 
     // Storage helpers
-    function getRecipes() { try { return JSON.parse(localStorage.getItem('hb_recipes') || '[]'); } catch(e) { return []; } }
+    function getRecipes() { try { var rs = JSON.parse(localStorage.getItem('hb_recipes') || '[]'); rs.forEach(function(r) { if (r.photo && String(r.photo).indexOf('data:') !== 0) r.photo = null; }); return rs; } catch(e) { return []; } }
     function setRecipes(r) { localStorage.setItem('hb_recipes', JSON.stringify(r)); }
     function getJournal() { try { return JSON.parse(localStorage.getItem('hb_journal') || '[]'); } catch(e) { return []; } }
     function setJournal(j) { localStorage.setItem('hb_journal', JSON.stringify(j)); }
@@ -1307,7 +1307,7 @@
         notes: document.getElementById('rNotes').value,
         inclusions: inclusions,
         steps: getStepsFromForm(),
-        photo: document.getElementById('photoPreview').src || null
+        photo: (function() { var s = document.getElementById('photoPreview').getAttribute('src'); return (s && s.indexOf('data:') === 0) ? s : null; })()
       };
       const recipes = getRecipes();
       if (editingRecipeId) {
