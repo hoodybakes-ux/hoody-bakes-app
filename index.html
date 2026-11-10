@@ -448,7 +448,7 @@
               </select>
             </div>
           </div>
-          <p class="bulk-hint">Measure dough temp at the centre with a probe thermometer after mixing. Picking a recipe fills in your starter % automatically.</p>
+          <p class="bulk-hint">Measure dough temp at the centre with a probe thermometer after mixing. Your window is based on the average of dough and room temp, because dough drifts toward room temperature as it ferments. Picking a recipe fills in your starter % automatically.</p>
         </div>
         <button class="btn-primary" id="bulkCalcBtn">Calculate my window</button>
       </div>
@@ -485,7 +485,7 @@
 
       <div class="bulk-card" style="margin-top:4px;">
         <div class="bulk-card-title">Temp Reference Guide</div>
-        <p class="bulk-hint" style="margin-bottom:10px;">Generated from the starter % and flour type above. Warmer dough gets cut off at a lower rise because fermentation keeps going through shaping and the cold proof.</p>
+        <p class="bulk-hint" style="margin-bottom:10px;">Generated from the starter % and flour type above. Warmer dough gets cut off at a lower rise because fermentation keeps going through shaping and the cold proof. Timing calibrated against the published dough temperature research at <a href="https://thesourdoughjourney.com" target="_blank" style="color:#4A9EA6;">The Sourdough Journey</a>.</p>
         <table class="bulk-ref-table" id="bulkRefTable"></table>
       </div>
     </div>
@@ -1619,23 +1619,33 @@
 
     function bulkToC(v) { return bulkTempUnit === 'F' ? (v - 32) * 5 / 9 : v; }
 
+    const BULK_TEMP_ANCHORS = [[18, 16.5], [19.5, 15], [21, 12], [22.5, 9], [24, 7], [25.5, 6], [27, 5.5]];
+    function bulkBaseHours(tC) {
+      const a = BULK_TEMP_ANCHORS;
+      if (tC <= a[0][0]) return a[0][1] * Math.pow(1.12, a[0][0] - tC);
+      if (tC >= a[a.length - 1][0]) return a[a.length - 1][1] * Math.pow(0.93, tC - a[a.length - 1][0]);
+      for (let i = 0; i < a.length - 1; i++) {
+        if (tC >= a[i][0] && tC <= a[i + 1][0]) {
+          const f = (tC - a[i][0]) / (a[i + 1][0] - a[i][0]);
+          return a[i][1] + f * (a[i + 1][1] - a[i][1]);
+        }
+      }
+      return 7;
+    }
     function bulkWindow(doughTempC, ambientTempC, starterPct, flourType) {
-      const baseTime = 4.5;
-      const dDiff = doughTempC - 24;
-      const dMult = dDiff >= 0 ? Math.pow(0.91, dDiff) : Math.pow(1.12, Math.abs(dDiff));
-      const aDiff = ambientTempC - 24;
-      const aMult = aDiff >= 0 ? Math.pow(0.97, aDiff) : Math.pow(1.04, Math.abs(aDiff));
+      const effC = doughTempC * 0.5 + ambientTempC * 0.5;
       const sMult = Math.pow(20 / Math.max(1, starterPct), 0.35);
       const fMult = BULK_FLOUR_MULT[flourType] || 1.0;
-      const mid = baseTime * dMult * aMult * sMult * fMult;
-      const low = Math.max(0.5, mid * 0.78);
-      const high = mid * 1.28;
+      const high = bulkBaseHours(effC) * sMult * fMult;
+      const low = Math.max(0.5, high * 0.65);
+      const mid = (low + high) / 2;
       return {
         low: Math.round(low * 4) / 4,
         mid: Math.round(mid * 4) / 4,
         high: Math.round(high * 4) / 4,
         midSecs: Math.round(mid * 3600),
-        highSecs: Math.round(high * 3600)
+        highSecs: Math.round(high * 3600),
+        effC: effC
       };
     }
 
@@ -1750,7 +1760,7 @@
       const w = bulkWindow(doughC, ambC, pct, flour);
       bulkLastCalc = {
         midSecs: w.midSecs, highSecs: w.highSecs,
-        rise: bulkTargetRise(doughC),
+        rise: bulkTargetRise(w.effC),
         tempLbl: doughRaw + '°' + bulkTempUnit
       };
       document.getElementById('bulkWindowRange').textContent = w.low + ' to ' + w.high;
