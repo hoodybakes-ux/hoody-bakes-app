@@ -807,6 +807,29 @@
     let cookTimerInterval = null;
     let cookTimerRemaining = 0;
     let cookTimerRunning = false;
+    let cookTimerEndAt = null;
+    let cookAudioCtx = null;
+    function cookAudioInit() {
+      try {
+        if (!cookAudioCtx) cookAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (cookAudioCtx.state === 'suspended') cookAudioCtx.resume();
+      } catch (e) {}
+    }
+    function cookBeep() {
+      try {
+        if (!cookAudioCtx) return;
+        [0, 0.55, 1.1].forEach(function(t, i) {
+          const o = cookAudioCtx.createOscillator();
+          const g = cookAudioCtx.createGain();
+          o.frequency.value = i === 2 ? 988 : 880;
+          o.connect(g); g.connect(cookAudioCtx.destination);
+          g.gain.setValueAtTime(0.35, cookAudioCtx.currentTime + t);
+          g.gain.exponentialRampToValueAtTime(0.001, cookAudioCtx.currentTime + t + 0.45);
+          o.start(cookAudioCtx.currentTime + t);
+          o.stop(cookAudioCtx.currentTime + t + 0.5);
+        });
+      } catch (e) {}
+    }
     let wakeLock = null;
 
     function buildChecklist(r) {
@@ -910,7 +933,7 @@
       const isLast = cookStepIndex === total - 1;
       document.getElementById('cookNextBtn').textContent = isLast ? 'Finish 🎉' : 'Next Step →';
       document.getElementById('cookNextBtn').className = 'cook-btn-next' + (isLast ? ' finish' : '');
-      document.getElementById('cookNextBtn').onclick = isLast ? closeCookMode : function() { cookStepIndex++; renderCookStep(); };
+      document.getElementById('cookNextBtn').onclick = isLast ? function() { closeCookMode(); openJournalModal(); } : function() { cookStepIndex++; renderCookStep(); };
       document.getElementById('cookPrevBtn').onclick = function() { cookStepIndex--; renderCookStep(); };
 
       // Timer
@@ -982,62 +1005,69 @@
         };
       });
 
-      // Start timer
+      // Start timer (clock-based: survives phone lock and app switching)
+      function cookRingClock(ts) {
+        const d = new Date(ts);
+        let h = d.getHours();
+        const mm = d.getMinutes();
+        const ap = h >= 12 ? 'pm' : 'am';
+        h = h % 12; if (h === 0) h = 12;
+        return h + ':' + (mm < 10 ? '0' : '') + mm + ' ' + ap;
+      }
+      function cookTimerDone() {
+        clearInterval(cookTimerInterval);
+        cookTimerRunning = false;
+        cookTimerEndAt = null;
+        cookTimerRemaining = 0;
+        countdown.textContent = 'Done!';
+        countdown.className = 'cook-timer-display done';
+        runLbl.textContent = 'timer complete ✓';
+        pauseBtn.textContent = 'Timer Done ✓';
+        pauseBtn.className = 'cook-timer-btn pause';
+        try { if (navigator.vibrate) navigator.vibrate([400, 200, 400, 200, 700]); } catch (e) {}
+        cookBeep();
+      }
+      function cookTick() {
+        if (!cookTimerEndAt) return;
+        const remaining = Math.ceil((cookTimerEndAt - Date.now()) / 1000);
+        if (remaining <= 0) { cookTimerDone(); return; }
+        cookTimerRemaining = remaining;
+        countdown.textContent = formatTime(remaining);
+        countdown.className = remaining <= 30 ? 'cook-timer-display urgent' : 'cook-timer-display';
+      }
       startBtn.onclick = function() {
         if (cookTimerRemaining <= 0) return;
+        cookAudioInit();
+        cookTimerEndAt = Date.now() + cookTimerRemaining * 1000;
         idleEl.style.display = 'none';
         runningEl.style.display = 'block';
         countdown.textContent = formatTime(cookTimerRemaining);
         countdown.className = 'cook-timer-display';
-        runLbl.textContent = 'remaining';
+        runLbl.textContent = 'rings at ' + cookRingClock(cookTimerEndAt) + ' while the app is open; set a phone alarm for long waits';
         cookTimerRunning = true;
         pauseBtn.textContent = 'Pause';
         pauseBtn.className = 'cook-timer-btn start';
-        cookTimerInterval = setInterval(function() {
-          cookTimerRemaining--;
-          if (cookTimerRemaining <= 0) {
-            cookTimerRemaining = 0;
-            clearInterval(cookTimerInterval);
-            cookTimerRunning = false;
-            countdown.textContent = 'Done!';
-            countdown.className = 'cook-timer-display done';
-            runLbl.textContent = 'timer complete ✓';
-            pauseBtn.textContent = 'Timer Done ✓';
-            pauseBtn.className = 'cook-timer-btn pause';
-          } else {
-            countdown.textContent = formatTime(cookTimerRemaining);
-            countdown.className = cookTimerRemaining <= 30 ? 'cook-timer-display urgent' : 'cook-timer-display';
-          }
-        }, 1000);
+        clearInterval(cookTimerInterval);
+        cookTimerInterval = setInterval(cookTick, 500);
       };
 
       // Pause/resume
       pauseBtn.onclick = function() {
         if (cookTimerRunning) {
+          cookTick();
           clearInterval(cookTimerInterval);
           cookTimerRunning = false;
+          cookTimerEndAt = null;
           pauseBtn.textContent = 'Resume';
           pauseBtn.className = 'cook-timer-btn start';
         } else if (cookTimerRemaining > 0) {
+          cookTimerEndAt = Date.now() + cookTimerRemaining * 1000;
+          runLbl.textContent = 'rings at ' + cookRingClock(cookTimerEndAt) + ' while the app is open; set a phone alarm for long waits';
           cookTimerRunning = true;
           pauseBtn.textContent = 'Pause';
           pauseBtn.className = 'cook-timer-btn start';
-          cookTimerInterval = setInterval(function() {
-            cookTimerRemaining--;
-            if (cookTimerRemaining <= 0) {
-              cookTimerRemaining = 0;
-              clearInterval(cookTimerInterval);
-              cookTimerRunning = false;
-              countdown.textContent = 'Done!';
-              countdown.className = 'cook-timer-display done';
-              runLbl.textContent = 'timer complete ✓';
-              pauseBtn.textContent = 'Timer Done ✓';
-              pauseBtn.className = 'cook-timer-btn pause';
-            } else {
-              countdown.textContent = formatTime(cookTimerRemaining);
-              countdown.className = cookTimerRemaining <= 30 ? 'cook-timer-display urgent' : 'cook-timer-display';
-            }
-          }, 1000);
+          clearInterval(cookTimerInterval);
+          cookTimerInterval = setInterval(cookTick, 500);
         }
       };
 
@@ -1045,6 +1075,7 @@
       resetBtn.onclick = function() {
         clearInterval(cookTimerInterval);
         cookTimerRunning = false;
+        cookTimerEndAt = null;
         cookTimerRemaining = hasMins ? Math.round(step.mins * 60) : 0;
         idleEl.style.display = 'block';
         runningEl.style.display = 'none';
@@ -1575,6 +1606,13 @@
     }
 
     // LOG BAKE
+    function openJournalModal() {
+      if (!currentDetailId) return;
+      document.getElementById('jDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('jNotes').value = '';
+      document.getElementById('jLoaves').value = '1';
+      document.getElementById('journalModal').classList.add('open');
+    }
     document.getElementById('logBakeBtn').addEventListener('click', function() {
       document.getElementById('jDate').value = new Date().toISOString().split('T')[0];
       document.getElementById('jNotes').value = '';
