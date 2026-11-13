@@ -455,13 +455,17 @@
 
       <div id="bulkResult" style="display:none;">
         <div class="bulk-dark-card">
-          <div class="bulk-dark-title">Estimated Bulk Window</div>
-          <div class="bulk-window-row"><span class="bulk-window-val" id="bulkWindowRange">0</span><span class="bulk-window-unit">hours</span></div>
+          <div class="bulk-dark-title">Your Bulk Guide</div>
+          <div class="bulk-window-row"><span class="bulk-window-val" id="bulkTargetRise">0%</span><span class="bulk-window-unit">target rise</span></div>
           <div class="bulk-rise-row">
-            <div class="bulk-rise-lbl">Target rise at your temp</div>
-            <div class="bulk-rise-val" id="bulkTargetRise">0%</div>
+            <div class="bulk-rise-lbl">Estimated time window</div>
+            <div class="bulk-rise-val" id="bulkWindowRange">0</div>
           </div>
-          <div class="bulk-disclaimer">A guide only. Trust the dough over the clock: look for your target rise, a domed surface, bubbles around the edges, and a jiggly, aerated feel.</div>
+          <div class="bulk-rise-row" id="bulkCalRow" style="display:none;">
+            <div class="bulk-rise-lbl">Adjusted to your kitchen</div>
+            <div class="bulk-rise-val" id="bulkCalNote" style="font-size:13px;color:#9a9590;"></div>
+          </div>
+          <div class="bulk-disclaimer">The rise is the real signal; the clock is only for planning. Look for your target rise, a domed surface, bubbles around the edges, and a jiggly, aerated feel.</div>
         </div>
         <button class="btn-primary" id="bulkStartBtn">Start bulk timer</button>
       </div>
@@ -1670,11 +1674,26 @@
       }
       return 7;
     }
+    function bulkKitchenFactor() {
+      try {
+        const cal = JSON.parse(localStorage.getItem('twl_bulk_cal') || '{"ratios":[]}');
+        const rs = cal.ratios || [];
+        if (!rs.length) return { factor: 1, n: 0 };
+        const sorted = rs.slice().sort(function(a, b) { return a - b; });
+        const med = sorted[Math.floor(sorted.length / 2)];
+        let f = 1 + (med - 1) * Math.min(sorted.length, 3) / 3;
+        f = Math.max(0.6, Math.min(1.75, f));
+        return { factor: Math.round(f * 100) / 100, n: rs.length };
+      } catch (e) { return { factor: 1, n: 0 }; }
+    }
     function bulkWindow(doughTempC, ambientTempC, starterPct, flourType) {
       const effC = doughTempC * 0.5 + ambientTempC * 0.5;
       const sMult = Math.pow(20 / Math.max(1, starterPct), 0.35);
       const fMult = BULK_FLOUR_MULT[flourType] || 1.0;
-      const high = bulkBaseHours(effC) * sMult * fMult;
+      const chartHigh = bulkBaseHours(effC) * sMult * fMult;
+      const chartMid = (chartHigh * 0.65 + chartHigh) / 2;
+      const kf = bulkKitchenFactor();
+      const high = chartHigh * kf.factor;
       const low = Math.max(0.5, high * 0.65);
       const mid = (low + high) / 2;
       return {
@@ -1683,7 +1702,10 @@
         high: Math.round(high * 4) / 4,
         midSecs: Math.round(mid * 3600),
         highSecs: Math.round(high * 3600),
-        effC: effC
+        chartMidSecs: Math.round(chartMid * 3600),
+        effC: effC,
+        kfFactor: kf.factor,
+        kfN: kf.n
       };
     }
 
@@ -1797,11 +1819,18 @@
       const ambC = bulkToC(ambRaw);
       const w = bulkWindow(doughC, ambC, pct, flour);
       bulkLastCalc = {
-        midSecs: w.midSecs, highSecs: w.highSecs,
+        midSecs: w.midSecs, highSecs: w.highSecs, chartMidSecs: w.chartMidSecs,
         rise: bulkTargetRise(w.effC),
         tempLbl: doughRaw + '°' + bulkTempUnit
       };
-      document.getElementById('bulkWindowRange').textContent = w.low + ' to ' + w.high;
+      document.getElementById('bulkWindowRange').textContent = w.low + ' to ' + w.high + ' h';
+      const calRow = document.getElementById('bulkCalRow');
+      if (w.kfN > 0 && w.kfFactor !== 1) {
+        calRow.style.display = 'flex';
+        document.getElementById('bulkCalNote').textContent = 'from your last ' + w.kfN + (w.kfN === 1 ? ' bake' : ' bakes');
+      } else {
+        calRow.style.display = 'none';
+      }
       document.getElementById('bulkTargetRise').textContent = bulkLastCalc.rise;
       document.getElementById('bulkDoneNote').style.display = 'none';
       document.getElementById('bulkResult').style.display = 'block';
@@ -1878,6 +1907,7 @@
         start: Date.now(),
         midSecs: bulkLastCalc.midSecs,
         highSecs: bulkLastCalc.highSecs,
+        chartMidSecs: bulkLastCalc.chartMidSecs,
         rise: bulkLastCalc.rise,
         tempLbl: bulkLastCalc.tempLbl
       };
@@ -1902,6 +1932,14 @@
       if (!s) return;
       if (!confirm('End bulk fermentation?')) return;
       const totalSecs = Math.round((Date.now() - s.start) / 1000);
+      if (s.chartMidSecs && totalSecs > 1800 && totalSecs < 86400) {
+        try {
+          const cal = JSON.parse(localStorage.getItem('twl_bulk_cal') || '{"ratios":[]}');
+          cal.ratios.push(Math.round((totalSecs / s.chartMidSecs) * 100) / 100);
+          if (cal.ratios.length > 5) cal.ratios = cal.ratios.slice(-5);
+          localStorage.setItem('twl_bulk_cal', JSON.stringify(cal));
+        } catch (e) {}
+      }
       trackEvent('bulk_timer_completed', { total_mins: Math.round(totalSecs / 60) });
       bulkReset('Bulk complete in ' + bulkFmtDur(totalSecs) + '. Time to shape!');
     });
