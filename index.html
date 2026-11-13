@@ -519,7 +519,7 @@
           <span class="flour-total-val" id="flourTotalDisplay">0 g</span>
         </div>
         <button class="add-flour-btn" id="addFlourBtn">+ Add another flour</button>
-        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:6px;">Add each flour type separately; the total is used for all hydration calculations.</p>
+        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:6px;">Add each flour type separately; the total is used for all hydration calculations. Protein % is optional, straight off the flour bag.</p>
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Water (g)</label><input class="form-input" type="number" id="rWater" placeholder="375" /></div>
@@ -1233,7 +1233,8 @@
       // Build flour blend display
       const flourRows = (r.flourBlend && r.flourBlend.length)
         ? r.flourBlend.map(function(f) {
-            return '<div class="ingredient-row"><div class="ingredient-name">' + f.name + '</div><div class="ingredient-val">' + f.qty + ' g</div></div>';
+            const pn = f.protein ? ' <span style="font-size:10px;color:#4A9EA6;">(' + f.protein + '% protein)</span>' : '';
+            return '<div class="ingredient-row"><div class="ingredient-name">' + f.name + pn + '</div><div class="ingredient-val">' + f.qty + ' g</div></div>';
           }).join('') +
           (r.flourBlend.length > 1 ? '<div class="ingredient-row" style="opacity:0.6;"><div class="ingredient-name">Total flour</div><div class="ingredient-val">' + (r.flour || 0) + ' g</div></div>' : '')
         : '<div class="ingredient-row"><div class="ingredient-name">Flour</div><div class="ingredient-val">' + (r.flour || 0) + ' g</div></div>';
@@ -1457,13 +1458,14 @@
     }
 
     // FLOUR BLEND
-    function addFlourRow(name, qty) {
+    function addFlourRow(name, qty, protein) {
       const list = document.getElementById('flourBlendList');
       const row = document.createElement('div');
       row.className = 'flour-row';
       row.innerHTML =
-        '<input class="form-input" type="text" placeholder="e.g. Bread flour" value="' + (name || '') + '" style="flex:1;" />' +
-        '<input class="form-input flour-qty" type="number" placeholder="g" value="' + (qty || '') + '" style="width:90px;flex-shrink:0;" />' +
+        '<input class="form-input" type="text" placeholder="e.g. Bread flour" value="' + (name || '') + '" style="flex:1;min-width:0;" />' +
+        '<input class="form-input flour-qty" type="number" placeholder="g" value="' + (qty || '') + '" style="width:70px;flex-shrink:0;" />' +
+        '<input class="form-input flour-protein" type="number" step="0.1" min="0" max="25" placeholder="prot %" title="Flour protein percentage (optional)" value="' + (protein || '') + '" style="width:74px;flex-shrink:0;" />' +
         '<button class="remove-btn js-flour-remove">×</button>';
       row.querySelector('.js-flour-remove').addEventListener('click', function() {
         row.remove();
@@ -1488,7 +1490,12 @@
       document.querySelectorAll('#flourBlendList .flour-row').forEach(function(row) {
         const name = row.querySelector('input[type="text"]').value.trim();
         const qty = parseFloat(row.querySelector('.flour-qty').value) || 0;
-        if (name && qty > 0) blend.push({ name: name, qty: qty });
+        const protein = parseFloat(row.querySelector('.flour-protein').value) || 0;
+        if (name && qty > 0) {
+          const f = { name: name, qty: qty };
+          if (protein > 0) f.protein = protein;
+          blend.push(f);
+        }
       });
       return blend;
     }
@@ -1503,7 +1510,7 @@
     function initFlourBlend(blend) {
       document.getElementById('flourBlendList').innerHTML = '';
       if (blend && blend.length) {
-        blend.forEach(function(f) { addFlourRow(f.name, f.qty); });
+        blend.forEach(function(f) { addFlourRow(f.name, f.qty, f.protein); });
       } else {
         addFlourRow('Bread flour', '');
       }
@@ -1588,7 +1595,8 @@
       let html = '';
       if (r.flourBlend && r.flourBlend.length) {
         r.flourBlend.forEach(function(f) {
-          html += '<div class="scale-row-item"><div class="scale-row-name">' + f.name + '</div><div class="scale-row-val">' + Math.round(f.qty * m) + ' g</div></div>';
+          const pn = f.protein ? ' <span style="font-size:10px;color:#4A9EA6;">(' + f.protein + '% protein)</span>' : '';
+          html += '<div class="scale-row-item"><div class="scale-row-name">' + f.name + pn + '</div><div class="scale-row-val">' + Math.round(f.qty * m) + ' g</div></div>';
         });
         if (r.flourBlend.length > 1) {
           html += '<div class="scale-row-item" style="opacity:0.6;"><div class="scale-row-name">Total flour</div><div class="scale-row-val">' + Math.round((r.flour || 0) * m) + ' g</div></div>';
