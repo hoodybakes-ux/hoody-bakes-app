@@ -465,6 +465,7 @@
             <div class="bulk-rise-lbl">Adjusted to your kitchen</div>
             <div class="bulk-rise-val" id="bulkCalNote" style="font-size:13px;color:#9a9590;"></div>
           </div>
+          <div id="bulkRiseVis"></div>
           <div class="bulk-disclaimer">The rise is the real signal; the clock is only for planning. Look for your target rise, a domed surface, bubbles around the edges, and a jiggly, aerated feel.</div>
         </div>
         <button class="btn-primary" id="bulkStartBtn">Start bulk timer</button>
@@ -477,6 +478,7 @@
           <div class="bulk-progress"><div class="bulk-progress-fill" id="bulkProgressFill"></div></div>
           <div class="bulk-window-labels"><span>Start</span><span id="bulkMidLbl"></span><span id="bulkEndLbl"></span></div>
           <div class="bulk-rise-reminder" id="bulkRiseReminder"></div>
+          <div id="bulkRiseVisRun"></div>
         </div>
         <div class="bulk-card">
           <div class="bulk-card-title">Checkpoints</div>
@@ -1718,6 +1720,31 @@
       return '90 to 100%';
     }
 
+    function bulkRiseVis(riseStr, theme) {
+      const m = String(riseStr).match(/(\d+)\D+(\d+)/);
+      if (!m) return '';
+      const lo = parseInt(m[1]);
+      const hi = parseInt(m[2]);
+      const yFor = function(p) { return 77 - 0.55 * p; };
+      const yLo = yFor(lo);
+      const yHi = yFor(hi);
+      const ink = theme === 'dark' ? 'rgba(240,237,232,0.55)' : '#5a554f';
+      const lbl = theme === 'dark' ? '#9a9590' : '#8a7a62';
+      const doughFill = theme === 'dark' ? 'rgba(74,158,166,0.30)' : 'rgba(74,158,166,0.22)';
+      return '<svg viewBox="0 0 300 150" style="width:100%;max-width:280px;display:block;margin:12px auto 0;">' +
+        '<path d="M78,18 L102,120 Q150,140 198,120 L222,18" fill="none" stroke="' + ink + '" stroke-width="2.5" stroke-linecap="round"/>' +
+        '<path d="M92,77 Q150,66 208,77 L198,120 Q150,140 102,120 Z" fill="' + doughFill + '"/>' +
+        '<path d="M92,77 Q150,66 208,77" fill="none" stroke="#4A9EA6" stroke-width="2.5"/>' +
+        '<line x1="92" y1="77" x2="208" y2="77" stroke="' + lbl + '" stroke-width="1" stroke-dasharray="3 4"/>' +
+        '<text x="86" y="81" text-anchor="end" font-size="10" fill="' + lbl + '" font-family="Montserrat,sans-serif">start</text>' +
+        '<rect x="92" y="' + yHi.toFixed(1) + '" width="116" height="' + (yLo - yHi).toFixed(1) + '" fill="rgba(92,184,92,0.25)"/>' +
+        '<line x1="92" y1="' + yLo.toFixed(1) + '" x2="208" y2="' + yLo.toFixed(1) + '" stroke="#5cb85c" stroke-width="1.5" stroke-dasharray="5 4"/>' +
+        '<line x1="92" y1="' + yHi.toFixed(1) + '" x2="208" y2="' + yHi.toFixed(1) + '" stroke="#5cb85c" stroke-width="1.5" stroke-dasharray="5 4"/>' +
+        '<text x="213" y="' + ((yLo + yHi) / 2 + 4).toFixed(1) + '" font-size="11" fill="#5cb85c" font-family="Montserrat,sans-serif">+' + lo + ' to ' + hi + '%</text>' +
+        '</svg>' +
+        '<div style="font-size:10px;color:' + lbl + ';text-align:center;margin-top:6px;line-height:1.5;max-width:280px;margin-left:auto;margin-right:auto;">Bulk ends when the dough top reaches the shaded zone. In a round bowl the rise always looks smaller than it is, so read the dome, edge bubbles and jiggle too.</div>';
+    }
+
     function bulkFmtHMS(secs) {
       secs = Math.max(0, Math.floor(secs));
       const h = Math.floor(secs / 3600);
@@ -1832,6 +1859,7 @@
         calRow.style.display = 'none';
       }
       document.getElementById('bulkTargetRise').textContent = bulkLastCalc.rise;
+      document.getElementById('bulkRiseVis').innerHTML = bulkRiseVis(bulkLastCalc.rise, 'dark');
       document.getElementById('bulkDoneNote').style.display = 'none';
       document.getElementById('bulkResult').style.display = 'block';
       document.getElementById('bulkResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1863,6 +1891,7 @@
       document.getElementById('bulkRiseReminder').innerHTML =
         'Started at ' + bulkFmtClock(s.start) + ' with dough at ' + s.tempLbl +
         '. Look for a <strong>' + s.rise + ' rise</strong>, a domed top and bubbles at the edges.';
+      document.getElementById('bulkRiseVisRun').innerHTML = bulkRiseVis(s.rise, 'light');
       document.getElementById('bulkCheckpoints').innerHTML = bulkCheckpointList(s).map(function(cp, i) {
         return '<div class="bulk-cp" data-secs="' + cp.secs + '">' +
           '<div class="bulk-cp-time">' + bulkFmtClock(s.start + cp.secs * 1000) + '</div>' +
