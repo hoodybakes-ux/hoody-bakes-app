@@ -203,6 +203,21 @@
     .bulk-ref-table td:first-child { font-weight: 500; color: #1C1C1A; }
     .bulk-done-note { background: rgba(92,184,92,0.1); border: 1px solid rgba(92,184,92,0.35); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #3a7a3a; font-weight: 400; margin-bottom: 12px; display: none; }
 
+    /* HOME MENU */
+    .home-grid { display: flex; flex-direction: column; gap: 12px; }
+    .home-card { background: #fff; border: 1px solid #ddd8d0; border-radius: 16px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+    .home-card:hover { border-color: #4A9EA6; }
+    .home-card-icon { font-size: 24px; flex-shrink: 0; width: 46px; height: 46px; background: #e8f4f5; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .home-card-body { flex: 1; min-width: 0; }
+    .home-card-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: #1C1C1A; }
+    .home-card-desc { font-size: 11px; color: #9a9590; font-weight: 300; line-height: 1.5; margin-top: 2px; }
+    .home-card-meta { font-size: 10px; color: #4A9EA6; font-weight: 500; margin-top: 5px; letter-spacing: 0.04em; }
+    .home-card-meta:empty { display: none; }
+    .home-card-meta.live::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #5cb85c; margin-right: 5px; animation: homepulse 1.5s infinite; }
+    @keyframes homepulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .home-card-arrow { font-size: 22px; color: #d6d0c8; flex-shrink: 0; }
+    .menu-link { background: transparent; border: none; color: #4A9EA6; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; padding: 0; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 6px; }
+
     /* SAMSUNG BROWSER BANNER */
     .browser-banner {
       display: none;
@@ -322,16 +337,54 @@
     <button class="browser-banner-dismiss" id="samsungBannerDismiss">Got it</button>
   </div>
 
-  <div class="tab-bar" id="tabBar">
-    <div class="tab active" data-tab="recipes">Recipes</div>
-    <div class="tab" data-tab="calculator">Calculator</div>
-    <div class="tab" data-tab="scale">Scale</div>
-    <div class="tab" data-tab="bulk">Bulk</div>
-  </div>
+
 
   <div class="content">
 
-    <div class="screen active" id="screen-recipes">
+    <!-- HOME MENU -->
+    <div class="screen active" id="screen-home">
+      <div class="eyebrow">Hoody's Sourdough Kitchen</div>
+      <div class="screen-heading">What are we baking?</div>
+      <div class="home-grid">
+        <div class="home-card" data-go="recipes">
+          <div class="home-card-icon">📖</div>
+          <div class="home-card-body">
+            <div class="home-card-name">My Recipes</div>
+            <div class="home-card-desc">Save recipes, step through cook mode, log every bake</div>
+            <div class="home-card-meta" id="homeRecipesMeta"></div>
+          </div>
+          <div class="home-card-arrow">›</div>
+        </div>
+        <div class="home-card" data-go="bulk">
+          <div class="home-card-icon">⏱</div>
+          <div class="home-card-body">
+            <div class="home-card-name">Bulk Ferment Tracker</div>
+            <div class="home-card-desc">Your time window, target rise and live timer from dough temp</div>
+            <div class="home-card-meta" id="homeBulkMeta"></div>
+          </div>
+          <div class="home-card-arrow">›</div>
+        </div>
+        <div class="home-card" data-go="calculator">
+          <div class="home-card-icon">💧</div>
+          <div class="home-card-body">
+            <div class="home-card-name">Hydration Calculator</div>
+            <div class="home-card-desc">Baker's percentages and dough weight, with handy presets</div>
+          </div>
+          <div class="home-card-arrow">›</div>
+        </div>
+        <div class="home-card" data-go="scale">
+          <div class="home-card-icon">⚖</div>
+          <div class="home-card-body">
+            <div class="home-card-name">Scale a Recipe</div>
+            <div class="home-card-desc">Batch any saved recipe up or down by loaf count</div>
+          </div>
+          <div class="home-card-arrow">›</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-recipes">
+      <button class="menu-link js-menu">← Menu</button>
       <div class="eyebrow">My recipes</div>
       <div class="screen-heading">Recipe Manager</div>
       <div class="upgrade-banner" id="upgradeBanner">
@@ -369,6 +422,7 @@
     </div>
 
     <div class="screen" id="screen-calculator">
+      <button class="menu-link js-menu">← Menu</button>
       <div class="eyebrow">Free tool</div>
       <div class="screen-heading">Hydration Calculator</div>
       <div class="presets">
@@ -398,6 +452,7 @@
     </div>
 
     <div class="screen" id="screen-scale">
+      <button class="menu-link js-menu">← Menu</button>
       <div class="eyebrow">Batch scaling</div>
       <div class="screen-heading">Scale a Recipe</div>
       <select class="scale-recipe-select" id="scaleSelect"><option value="">Select a recipe</option></select>
@@ -414,6 +469,7 @@
 
     <!-- BULK TIMER TAB -->
     <div class="screen" id="screen-bulk">
+      <button class="menu-link js-menu">← Menu</button>
       <div class="eyebrow">Bulk fermentation</div>
       <div class="screen-heading">Bulk Timer</div>
       <div class="bulk-done-note" id="bulkDoneNote"></div>
@@ -1128,27 +1184,42 @@
     }
 
     // TABS
-    document.getElementById('tabBar').addEventListener('click', function(e) {
-      const tab = e.target.closest('.tab');
-      if (!tab) return;
-      const name = tab.dataset.tab;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    function goScreen(name) {
+      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
       document.getElementById('screen-' + name).classList.add('active');
+      if (name === 'home') renderHome();
       if (name === 'scale') refreshScaleSelect();
       if (name === 'recipes') renderRecipes();
       if (name === 'bulk') refreshBulkSelect();
-      trackEvent('tab_viewed', { tab_name: name });
+      if (name !== 'home') trackEvent('tab_viewed', { tab_name: name });
+      const sc = document.querySelector('.content');
+      if (sc) sc.scrollTop = 0;
+    }
+    function renderHome() {
+      const n = getRecipes().length;
+      const meta = document.getElementById('homeRecipesMeta');
+      if (n > 0) meta.textContent = n + (isPremium() ? '' : ' of 3') + ' saved';
+      else meta.textContent = 'Nothing saved yet, add your first';
+      const bulkMeta = document.getElementById('homeBulkMeta');
+      if (bulkGetSession()) {
+        bulkMeta.textContent = 'Timer running';
+        bulkMeta.classList.add('live');
+      } else {
+        bulkMeta.textContent = '';
+        bulkMeta.classList.remove('live');
+      }
+    }
+    document.getElementById('screen-home').addEventListener('click', function(e) {
+      const card = e.target.closest('.home-card');
+      if (card) goScreen(card.dataset.go);
+    });
+    document.querySelectorAll('.js-menu').forEach(function(b) {
+      b.addEventListener('click', function() { goScreen('home'); });
     });
 
     // BACK BUTTON
     document.getElementById('backBtn').addEventListener('click', function() {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById('screen-recipes').classList.add('active');
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelector('[data-tab="recipes"]').classList.add('active');
-      renderRecipes();
+      goScreen('recipes');
     });
 
     // RENDER RECIPES
@@ -1317,11 +1388,7 @@
       if (!confirm('Delete this recipe and all its bake history?')) return;
       setRecipes(getRecipes().filter(function(r) { return r.id !== currentDetailId; }));
       setJournal(getJournal().filter(function(j) { return j.recipeId !== currentDetailId; }));
-      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-      document.getElementById('screen-recipes').classList.add('active');
-      document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
-      document.querySelector('[data-tab="recipes"]').classList.add('active');
-      renderRecipes();
+      goScreen('recipes');
       refreshScaleSelect();
     });
 
@@ -2015,6 +2082,7 @@
     refreshScaleSelect();
     refreshBulkSelect();
     restoreBulkSession();
+    renderHome();
 
     // PWA SERVICE WORKER
     if ('serviceWorker' in navigator) {
