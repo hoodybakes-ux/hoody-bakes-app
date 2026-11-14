@@ -1,4 +1,4 @@
-const CACHE_NAME = 'the-whole-loaf-v13';
+const CACHE_NAME = 'the-whole-loaf-v14';
 const ASSETS = [
   '/',
   '/index.html',
@@ -9,7 +9,7 @@ const ASSETS = [
   'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap'
 ];
 
-// Install — cache all core assets
+// Install: cache all core assets
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
@@ -19,7 +19,7 @@ self.addEventListener('install', function(e) {
   self.skipWaiting();
 });
 
-// Activate — clear old caches
+// Activate: clear old caches
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
@@ -32,12 +32,28 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
-// Fetch — serve from cache, fall back to network
+// Fetch: the page itself is network-first so updates show on the next open,
+// with the cached copy as the offline fallback. Other assets are cache-first.
 self.addEventListener('fetch', function(e) {
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request).then(function(response) {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(function(cache) {
+            cache.put('/index.html', clone);
+          });
+        }
+        return response;
+      }).catch(function() {
+        return caches.match('/index.html');
+      })
+    );
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(function(cached) {
       return cached || fetch(e.request).then(function(response) {
-        // Cache successful GET requests
         if (e.request.method === 'GET' && response.status === 200) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(function(cache) {
@@ -47,7 +63,6 @@ self.addEventListener('fetch', function(e) {
         return response;
       });
     }).catch(function() {
-      // Offline fallback — return cached index.html
       return caches.match('/index.html');
     })
   );
