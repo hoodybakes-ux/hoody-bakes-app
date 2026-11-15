@@ -417,6 +417,7 @@
       <div id="detailJournal"></div>
       <button class="btn-primary" id="startCookModeBtn" style="margin-top:0.5rem; background:#1C1C1A; display:flex; align-items:center; justify-content:center; gap:8px;">🍞 Start Cook Mode</button>
       <button class="btn-primary" id="logBakeBtn" style="margin-top:10px;">+ Log a bake</button>
+      <button class="btn-secondary" id="trackBulkBtn">⏱ Track bulk ferment</button>
       <button class="btn-secondary" id="editRecipeBtn">Edit recipe</button>
       <button class="btn-danger" id="deleteRecipeBtn">Delete recipe</button>
     </div>
@@ -1161,6 +1162,14 @@
       if (confirm('Exit cook mode?')) closeCookMode();
     });
 
+    document.getElementById('trackBulkBtn').addEventListener('click', function() {
+      if (!currentDetailId) return;
+      goScreen('bulk');
+      const sel = document.getElementById('bulkRecipeSelect');
+      sel.value = currentDetailId;
+      sel.dispatchEvent(new Event('change'));
+    });
+
     document.getElementById('startCookModeBtn').addEventListener('click', function() {
       if (currentDetailId) {
         const r = getRecipes().find(function(x) { return x.id === currentDetailId; });
@@ -1687,25 +1696,25 @@
     }
 
     // LOG BAKE
-    function openJournalModal() {
-      if (!currentDetailId) return;
+    let journalForId = null;
+    function openJournalModal(recipeId, prefillNote) {
+      journalForId = recipeId || currentDetailId;
+      if (!journalForId) return;
       document.getElementById('jDate').value = new Date().toISOString().split('T')[0];
-      document.getElementById('jNotes').value = '';
-      document.getElementById('jLoaves').value = '1';
-      document.getElementById('journalModal').classList.add('open');
-    }
-    document.getElementById('logBakeBtn').addEventListener('click', function() {
-      document.getElementById('jDate').value = new Date().toISOString().split('T')[0];
-      document.getElementById('jNotes').value = '';
+      document.getElementById('jNotes').value = prefillNote || '';
       document.getElementById('jLoaves').value = '1';
       document.getElementById('jResult').value = 'Good';
       document.getElementById('journalModal').classList.add('open');
+    }
+    document.getElementById('logBakeBtn').addEventListener('click', function() {
+      openJournalModal(currentDetailId);
     });
     document.getElementById('saveJournalBtn').addEventListener('click', function() {
-      if (!currentDetailId) return;
+      const targetId = journalForId || currentDetailId;
+      if (!targetId) return;
       const entry = {
         id: Date.now().toString(),
-        recipeId: currentDetailId,
+        recipeId: targetId,
         date: document.getElementById('jDate').value,
         notes: document.getElementById('jNotes').value,
         loaves: parseInt(document.getElementById('jLoaves').value) || 1,
@@ -1716,7 +1725,10 @@
       setJournal(journal);
       trackEvent('bake_logged', { result: entry.result, loaves: entry.loaves });
       document.getElementById('journalModal').classList.remove('open');
-      renderDetailJournal(currentDetailId);
+      if (document.getElementById('screen-recipe-detail').classList.contains('active') && currentDetailId === targetId) {
+        renderDetailJournal(targetId);
+      }
+      journalForId = null;
     });
 
     // UPGRADE
@@ -2007,13 +2019,15 @@
 
     document.getElementById('bulkStartBtn').addEventListener('click', function() {
       if (!bulkLastCalc) return;
+      const bulkSel = document.getElementById('bulkRecipeSelect');
       const session = {
         start: Date.now(),
         midSecs: bulkLastCalc.midSecs,
         highSecs: bulkLastCalc.highSecs,
         chartMidSecs: bulkLastCalc.chartMidSecs,
         rise: bulkLastCalc.rise,
-        tempLbl: bulkLastCalc.tempLbl
+        tempLbl: bulkLastCalc.tempLbl,
+        recipeId: bulkSel.value || null
       };
       localStorage.setItem('twl_bulk', JSON.stringify(session));
       trackEvent('bulk_timer_started');
@@ -2046,6 +2060,9 @@
       }
       trackEvent('bulk_timer_completed', { total_mins: Math.round(totalSecs / 60) });
       bulkReset('Bulk complete in ' + bulkFmtDur(totalSecs) + '. Time to shape!');
+      if (s.recipeId && getRecipes().some(function(r) { return r.id === s.recipeId; })) {
+        openJournalModal(s.recipeId, 'Bulk ferment: ' + bulkFmtDur(totalSecs) + ', dough at ' + s.tempLbl + '.');
+      }
     });
 
     document.getElementById('bulkCancelBtn').addEventListener('click', function() {
