@@ -472,7 +472,7 @@
     <div class="screen" id="screen-bulk">
       <button class="menu-link js-menu">← Menu</button>
       <div class="eyebrow">Bulk fermentation</div>
-      <div class="screen-heading">Bulk Timer</div>
+      <div class="screen-heading">Bulk Ferment Tracker</div>
       <div class="bulk-done-note" id="bulkDoneNote"></div>
 
       <div id="bulkSetup">
@@ -505,7 +505,7 @@
               </select>
             </div>
           </div>
-          <p class="bulk-hint">Measure dough temp at the centre with a probe thermometer after mixing. Your window is based on the average of dough and room temp, because dough drifts toward room temperature as it ferments. Picking a recipe fills in your starter % automatically.</p>
+          <p class="bulk-hint">Measure dough temp at the centre with a probe thermometer after mixing. Your window is based on the average of dough and room temp, because dough drifts toward room temperature as it ferments. Picking a recipe fills in your starter % and flour blend automatically.</p>
         </div>
         <button class="btn-primary" id="bulkCalcBtn">Calculate my window</button>
       </div>
@@ -670,6 +670,7 @@
     </div>
     <div class="cook-progress-bar"><div class="cook-progress-fill" id="cookProgressFill" style="width:0%"></div></div>
     <div class="cook-body" id="cookBody">
+      <div class="cook-no-steps" id="cookEmptyState" style="display:none;"></div>
       <div class="cook-step-counter" id="cookStepCounter">Step 1 of 1</div>
       <div class="cook-step-title" id="cookStepTitle"></div>
       <div class="cook-step-body" id="cookStepBody"></div>
@@ -848,7 +849,7 @@
       }
       document.getElementById('stepsList').innerHTML = '';
       const r = {
-        flour: parseFloat(document.getElementById('rFlour').value) || 500,
+        flour: getTotalFlourFromBlend(getFlourBlendFromForm()) || 500,
         water: parseFloat(document.getElementById('rWater').value) || 375,
         starter: parseFloat(document.getElementById('rStarter').value) || 100,
         starterHyd: parseFloat(document.getElementById('rStarterHyd').value) || 100,
@@ -940,9 +941,11 @@
       if (wakeLock) { wakeLock.release(); wakeLock = null; }
     }
 
+    let cookRecipeId = null;
     function openCookMode(recipeId) {
       const r = getRecipes().find(function(x) { return x.id === recipeId; });
       if (!r) return;
+      cookRecipeId = recipeId;
       cookSteps = r.steps && r.steps.length ? r.steps : [];
       cookStepIndex = 0;
       document.getElementById('cookRecipeName').textContent = r.name;
@@ -968,12 +971,27 @@
       const total = cookSteps.length;
 
       if (!total) {
-        document.getElementById('cookBody').innerHTML =
-          '<div class="cook-no-steps">' +
+        const emptyEl = document.getElementById('cookEmptyState');
+        emptyEl.innerHTML =
           '<div style="font-size:48px;margin-bottom:1rem;">🍞</div>' +
           '<strong style="color:#F0EDE8;font-family:\'Cormorant Garamond\',serif;font-size:24px;">No steps yet</strong>' +
-          '<p style="margin-top:0.75rem;">Edit this recipe and add cook mode steps, or use the auto-generate button to create a full sourdough guide.</p>' +
-          '</div>';
+          '<p style="margin-top:0.75rem;">Build a step-by-step guide from this recipe, with timers for every rest and fold. You can reword any step later in Edit recipe.</p>' +
+          '<button class="cook-timer-btn start" id="cookGenStepsBtn" style="margin-top:1.25rem;">Generate my sourdough guide</button>';
+        emptyEl.style.display = 'block';
+        ['cookStepCounter', 'cookStepTitle', 'cookStepBody', 'cookChecklist', 'cookTimerSection'].forEach(function(id) {
+          document.getElementById(id).style.display = 'none';
+        });
+        document.getElementById('cookGenStepsBtn').onclick = function() {
+          const rs = getRecipes();
+          const rec = rs.find(function(x) { return x.id === cookRecipeId; });
+          if (!rec) return;
+          rec.steps = generateSteps(rec);
+          setRecipes(rs);
+          cookSteps = rec.steps;
+          cookStepIndex = 0;
+          trackEvent('cook_steps_generated');
+          renderCookStep();
+        };
         document.getElementById('cookProgressFill').style.width = '0%';
         document.getElementById('cookPrevBtn').disabled = true;
         document.getElementById('cookNextBtn').textContent = 'Close';
@@ -981,6 +999,11 @@
         document.getElementById('cookNextBtn').onclick = closeCookMode;
         return;
       }
+
+      document.getElementById('cookEmptyState').style.display = 'none';
+      document.getElementById('cookStepCounter').style.display = '';
+      document.getElementById('cookStepTitle').style.display = '';
+      document.getElementById('cookStepBody').style.display = '';
 
       const step = cookSteps[cookStepIndex];
       const pct = Math.round(((cookStepIndex + 1) / total) * 100);
@@ -1744,6 +1767,26 @@
 
     // BULK FERMENT TIMER
     const BULK_FLOUR_MULT = { ap: 1.05, bread: 1.0, wholemeal: 0.82, rye: 0.70, spelt: 0.88, einkorn: 0.95 };
+    let bulkRecipeMult = 1;
+    function bulkFlourNameMult(name) {
+      const n = String(name || '').toLowerCase();
+      if (n.indexOf('rye') !== -1) return 0.70;
+      if (n.indexOf('whole') !== -1) return 0.82;
+      if (n.indexOf('spelt') !== -1) return 0.88;
+      if (n.indexOf('einkorn') !== -1) return 0.95;
+      if (n.indexOf('plain') !== -1 || n.indexOf('purpose') !== -1) return 1.05;
+      return 1.0;
+    }
+    function bulkBlendMult(blend) {
+      let total = 0;
+      let acc = 0;
+      (blend || []).forEach(function(f) {
+        const q = f.qty || 0;
+        total += q;
+        acc += q * bulkFlourNameMult(f.name);
+      });
+      return total > 0 ? Math.round((acc / total) * 100) / 100 : 1.0;
+    }
     let bulkTempUnit = 'C';
     let bulkTickInterval = null;
     let bulkLastCalc = null;
@@ -1778,7 +1821,7 @@
     function bulkWindow(doughTempC, ambientTempC, starterPct, flourType) {
       const effC = doughTempC * 0.5 + ambientTempC * 0.5;
       const sMult = Math.pow(20 / Math.max(1, starterPct), 0.35);
-      const fMult = BULK_FLOUR_MULT[flourType] || 1.0;
+      const fMult = flourType === 'recipe' ? bulkRecipeMult : (BULK_FLOUR_MULT[flourType] || 1.0);
       const chartHigh = bulkBaseHours(effC) * sMult * fMult;
       const chartMid = (chartHigh * 0.65 + chartHigh) / 2;
       const kf = bulkKitchenFactor();
@@ -1870,11 +1913,30 @@
     }
 
     document.getElementById('bulkRecipeSelect').addEventListener('change', function() {
-      const r = getRecipes().find(function(x) { return x.id === document.getElementById('bulkRecipeSelect').value; });
+      const sel = document.getElementById('bulkRecipeSelect');
+      const flourSel = document.getElementById('bulkFlourType');
+      let recOpt = flourSel.querySelector('option[value="recipe"]');
+      const r = getRecipes().find(function(x) { return x.id === sel.value; });
       if (r && r.flour > 0) {
         document.getElementById('bulkStarterPct').value = Math.round(((r.starter || 0) / r.flour) * 100);
-        renderBulkRefTable();
+        if (r.flourBlend && r.flourBlend.length) {
+          bulkRecipeMult = bulkBlendMult(r.flourBlend);
+          if (!recOpt) {
+            recOpt = document.createElement('option');
+            recOpt.value = 'recipe';
+            flourSel.insertBefore(recOpt, flourSel.firstChild);
+          }
+          recOpt.textContent = 'Recipe blend: ' + r.flourBlend.map(function(f) { return f.name; }).join(' + ');
+          flourSel.value = 'recipe';
+        }
+      } else {
+        if (recOpt) {
+          if (flourSel.value === 'recipe') flourSel.value = 'bread';
+          recOpt.remove();
+        }
+        bulkRecipeMult = 1;
       }
+      renderBulkRefTable();
     });
     document.getElementById('bulkStarterPct').addEventListener('input', renderBulkRefTable);
     document.getElementById('bulkFlourType').addEventListener('change', renderBulkRefTable);
