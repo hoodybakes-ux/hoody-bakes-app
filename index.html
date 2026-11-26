@@ -753,7 +753,7 @@
       row.innerHTML =
         '<div class="step-num">' + idx + '</div>' +
         '<div class="step-inputs">' +
-          '<input class="step-title-input" type="text" placeholder="Step title (e.g. Autolyse)" value="' + (title || '') + '" />' +
+          '<input class="step-title-input" type="text" placeholder="Step title (e.g. Mix the dough)" value="' + (title || '') + '" />' +
           '<textarea class="step-body-input" placeholder="Instructions for this step...">' + (body || '') + '</textarea>' +
           '<div class="step-timer-row"><span class="step-timer-lbl">⏱ Timer (mins):</span><input class="step-timer-mins" type="number" placeholder="0" min="0" value="' + (mins || '') + '" /></div>' +
         '</div>' +
@@ -792,9 +792,8 @@
         : '';
 
       steps.push({ title: 'Feed your starter', body: 'Make sure your starter is active and bubbly before you begin. It should have peaked, with a domed top, bubbles throughout, and a jiggly texture.', mins: 0 });
-      steps.push({ title: 'Autolyse', body: 'Mix ' + totalFlour + 'g flour with ' + totalWater + 'g water until no dry flour remains. Cover and rest to hydrate the flour fully.', mins: 30 });
-      steps.push({ title: 'Add starter', body: 'Add ' + (r.starter || 0) + 'g of active starter to your dough. Squeeze and fold it in until fully incorporated.', mins: 0 });
-      steps.push({ title: 'Add salt', body: 'Sprinkle ' + (r.salt || 0) + 'g salt over the dough with a splash of water to help dissolve it. Fold it in thoroughly.' + inclText, mins: 0 });
+      steps.push({ title: 'Mix the dough', body: 'Add ' + (r.water || 0) + 'g water and ' + (r.starter || 0) + 'g active starter to ' + (r.flour || 0) + 'g flour, then add ' + (r.salt || 0) + 'g salt. Mix until no dry flour remains and the dough comes together into a shaggy ball.' + inclText, mins: 0 });
+      steps.push({ title: 'Rest', body: 'Cover the bowl and let the dough rest so the flour can fully hydrate before your first set of folds.', mins: 30 });
       steps.push({ title: 'Stretch & fold: Round 1', body: 'With wet hands, perform a set of stretch and folds: stretch the dough up and fold it over itself, rotating the bowl 90° each time. Do 4 folds total.', mins: 30 });
       steps.push({ title: 'Stretch & fold: Round 2', body: 'Perform another set of stretch and folds. The dough should be starting to feel stronger and more elastic.', mins: 30 });
       steps.push({ title: 'Stretch & fold: Round 3', body: 'Third set of stretch and folds. You can also try coil folds at this stage if you prefer.', mins: 30 });
