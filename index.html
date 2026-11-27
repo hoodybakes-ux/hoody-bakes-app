@@ -244,7 +244,8 @@
     .cook-progress-bar { height: 3px; background: #2a2a27; flex-shrink: 0; }
     .cook-progress-fill { height: 100%; background: #4A9EA6; transition: width 0.4s ease; }
     .cook-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding: 1.5rem; }
-    .cook-step-counter { font-size: 10px; color: #4A9EA6; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; margin-bottom: 0.5rem; }
+    .cook-step-counter { font-size: 10px; color: #4A9EA6; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; margin-bottom: 0.25rem; }
+    .cook-edit-steps { background: none; border: none; color: #8a857f; font-size: 11px; font-weight: 300; text-decoration: underline; padding: 0; margin: 0 0 0.75rem 0; cursor: pointer; display: block; text-align: left; }
     .cook-step-title { font-family: 'Cormorant Garamond', serif; font-size: 34px; color: #F0EDE8; font-weight: 600; line-height: 1.1; margin-bottom: 1rem; }
     .cook-step-body { font-size: 15px; color: #c8c3bc; line-height: 1.75; font-weight: 300; flex: 1; }
     .cook-timer-section { margin-top: 1.5rem; }
@@ -678,6 +679,7 @@
     <div class="cook-body" id="cookBody">
       <div class="cook-no-steps" id="cookEmptyState" style="display:none;"></div>
       <div class="cook-step-counter" id="cookStepCounter">Step 1 of 1</div>
+      <button class="cook-edit-steps" id="cookEditStepsBtn">Not quite how you bake? Edit these steps</button>
       <div class="cook-step-title" id="cookStepTitle"></div>
       <div class="cook-step-body" id="cookStepBody"></div>
       <div class="cook-checklist" id="cookChecklist" style="display:none;">
@@ -1033,7 +1035,7 @@
           '<p style="margin-top:0.75rem;">Build a step-by-step guide from this recipe, with timers for every rest and fold. You can reword any step later in Edit recipe.</p>' +
           '<button class="cook-timer-btn start" id="cookGenStepsBtn" style="margin-top:1.25rem;">Generate my sourdough guide</button>';
         emptyEl.style.display = 'block';
-        ['cookStepCounter', 'cookStepTitle', 'cookStepBody', 'cookChecklist', 'cookTimerSection'].forEach(function(id) {
+        ['cookStepCounter', 'cookEditStepsBtn', 'cookStepTitle', 'cookStepBody', 'cookChecklist', 'cookTimerSection'].forEach(function(id) {
           document.getElementById(id).style.display = 'none';
         });
         document.getElementById('cookGenStepsBtn').onclick = function() {
@@ -1059,6 +1061,7 @@
       emptyClear.style.display = 'none';
       emptyClear.innerHTML = '';
       document.getElementById('cookStepCounter').style.display = '';
+      document.getElementById('cookEditStepsBtn').style.display = '';
       document.getElementById('cookStepTitle').style.display = '';
       document.getElementById('cookStepBody').style.display = '';
 
@@ -1288,6 +1291,17 @@
 
     document.getElementById('cookExitBtn').addEventListener('click', function() {
       document.getElementById('cookExitModal').classList.add('open');
+    });
+    document.getElementById('cookEditStepsBtn').addEventListener('click', function() {
+      saveCookSession();
+      closeCookMode();
+      openDetail(cookRecipeId);
+      document.getElementById('editRecipeBtn').click();
+      setTimeout(function() {
+        const steps = document.getElementById('stepsList');
+        if (steps) steps.scrollIntoView({ block: 'center' });
+      }, 120);
+      trackEvent('cook_edit_steps_link');
     });
     function cookExitFinish() {
       document.getElementById('cookExitModal').classList.remove('open');

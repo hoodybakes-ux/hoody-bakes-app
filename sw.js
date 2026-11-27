@@ -1,4 +1,4 @@
-const CACHE_NAME = 'the-whole-loaf-v23';
+const CACHE_NAME = 'the-whole-loaf-v24';
 const ASSETS = [
   '/',
   '/index.html',
