@@ -269,6 +269,7 @@
     .cook-footer { padding: 1rem 1.5rem 1.5rem; border-top: 1px solid #2a2a27; display: flex; gap: 10px; flex-shrink: 0; }
     .cook-btn-prev { flex: 1; padding: 14px; border-radius: 50px; border: 1px solid #2a2a27; background: transparent; color: #9a9590; font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
     .cook-btn-prev:disabled { opacity: 0.3; cursor: default; }
+    #recipeModal .modal:not(.show-advanced) .flour-protein { display: none; }
     .cook-btn-next { flex: 2; padding: 14px; border-radius: 50px; border: none; background: #4A9EA6; color: #F0EDE8; font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; font-weight: 400; }
     .cook-btn-next.finish { background: #5cb85c; }
     .cook-no-steps { text-align: center; padding: 3rem 1rem; color: #6a6560; font-size: 14px; font-weight: 300; line-height: 1.7; }
@@ -372,14 +373,6 @@
           </div>
           <div class="home-card-arrow">›</div>
         </div>
-        <div class="home-card" data-go="scale">
-          <div class="home-card-icon">⚖</div>
-          <div class="home-card-body">
-            <div class="home-card-name">Scale a Recipe</div>
-            <div class="home-card-desc">Batch any saved recipe up or down by loaf count</div>
-          </div>
-          <div class="home-card-arrow">›</div>
-        </div>
       </div>
     </div>
 
@@ -404,9 +397,17 @@
       </div>
       <img id="detailPhoto" class="detail-photo" src="" alt="" style="display:none;" />
       <div class="section-divider">Ingredients</div>
+      <div class="loaf-counter" style="margin-bottom:0.75rem;">
+        <div class="loaf-label">Baking more than one loaf?</div>
+        <div class="loaf-controls">
+          <button class="loaf-btn" id="detailLoafMinus">−</button>
+          <div class="loaf-val" id="detailLoafCount">1</div>
+          <button class="loaf-btn" id="detailLoafPlus">+</button>
+        </div>
+      </div>
       <div id="detailIngredients"></div>
       <div id="detailInclusionsSection" style="display:none;">
-        <div class="section-divider">Inclusions</div>
+        <div class="section-divider">Add-ins</div>
         <div id="detailInclusions"></div>
       </div>
       <div id="detailNotesSection" style="display:none;">
@@ -426,6 +427,7 @@
       <button class="menu-link js-menu">← Menu</button>
       <div class="eyebrow">Free tool</div>
       <div class="screen-heading">Hydration Calculator</div>
+      <p style="font-size:13px;color:#7a7570;font-weight:300;line-height:1.7;margin-bottom:1rem;">Hydration is simply how wet your dough is: water as a percentage of flour. A wetter dough bakes a more open, holey crumb.</p>
       <div class="presets">
         <span class="preset-label">Presets:</span>
         <button class="preset-btn" data-hyd="65">65% Sandwich</button>
@@ -434,12 +436,13 @@
       </div>
       <div class="calc-card">
         <div class="calc-grid">
-          <div class="calc-field"><label>Flour (g)</label><input class="calc-input" type="number" id="cFlour" placeholder="440" /></div>
-          <div class="calc-field"><label>Water (g)</label><input class="calc-input" type="number" id="cWater" placeholder="290" /></div>
-          <div class="calc-field"><label>Starter (g)</label><input class="calc-input" type="number" id="cStarter" placeholder="125" /></div>
-          <div class="calc-field"><label>Starter hydration %</label><input class="calc-input" type="number" id="cStarterHyd" placeholder="100" /></div>
-          <div class="calc-field"><label>Salt (g)</label><input class="calc-input" type="number" id="cSalt" placeholder="12" /></div>
+          <div class="calc-field"><label>Flour (g)</label><input class="calc-input" type="number" id="cFlour" placeholder="e.g. 440" /></div>
+          <div class="calc-field"><label>Water (g)</label><input class="calc-input" type="number" id="cWater" placeholder="e.g. 290" /></div>
+          <div class="calc-field"><label>Starter (g)</label><input class="calc-input" type="number" id="cStarter" placeholder="e.g. 125" /></div>
+          <div class="calc-field"><label>Starter hydration %</label><input class="calc-input" type="number" id="cStarterHyd" placeholder="e.g. 100" /></div>
+          <div class="calc-field"><label>Salt (g)</label><input class="calc-input" type="number" id="cSalt" placeholder="e.g. 12" /></div>
         </div>
+        <div class="calc-empty" id="calcEmpty" style="text-align:center;font-size:13px;color:#9a9590;font-weight:300;padding:1rem 0;">Type your amounts above and the maths happens as you go.</div>
         <div class="calc-result">
           <div class="calc-pct" id="calcPct">–</div>
           <div class="calc-lbl">Overall hydration</div>
@@ -450,22 +453,6 @@
           <div class="calc-stat"><div class="calc-stat-val" id="calcDoughWeight">– g</div><div class="calc-stat-lbl">Dough weight</div></div>
         </div>
       </div>
-    </div>
-
-    <div class="screen" id="screen-scale">
-      <button class="menu-link js-menu">← Menu</button>
-      <div class="eyebrow">Batch scaling</div>
-      <div class="screen-heading">Scale a Recipe</div>
-      <select class="scale-recipe-select" id="scaleSelect"><option value="">Select a recipe</option></select>
-      <div class="loaf-counter">
-        <div class="loaf-label">Number of loaves</div>
-        <div class="loaf-controls">
-          <button class="loaf-btn" id="loafMinus">−</button>
-          <div class="loaf-val" id="loafCount">1</div>
-          <button class="loaf-btn" id="loafPlus">+</button>
-        </div>
-      </div>
-      <div class="scale-results" id="scaleResults"><div class="scale-empty">Select a recipe above to scale it up</div></div>
     </div>
 
     <!-- BULK TIMER TAB -->
@@ -576,7 +563,7 @@
           <span class="flour-total-val" id="flourTotalDisplay">0 g</span>
         </div>
         <button class="add-flour-btn" id="addFlourBtn">+ Add another flour</button>
-        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:6px;">Add each flour type separately; the total is used for all hydration calculations. Protein % is optional, straight off the flour bag.</p>
+        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:6px;">One flour? Just pop in the grams. Using a mix, like bread flour plus rye? Add each one and the total adds up for you.</p>
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Water (g)</label><input class="form-input" type="number" id="rWater" placeholder="375" /></div>
@@ -584,32 +571,38 @@
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Starter (g)</label><input class="form-input" type="number" id="rStarter" placeholder="100" /></div>
-        <div class="form-group"><label class="form-label">Starter hydration %</label><input class="form-input" type="number" id="rStarterHyd" placeholder="100" /></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Inclusions (optional)</label>
-        <div class="inclusions-list" id="inclusionsList"></div>
-        <button class="add-inclusion-btn" id="addInclusionBtn">+ Add inclusion</button>
-        <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:10px;">By default, inclusions are left out of the hydration %, which is how most recipes treat them. If you want full precision, tap "counts toward hydration" on a wet inclusion like honey or maple syrup to add its water content to the calculation. Water content values sourced from the <a href="https://www.foodstandards.gov.au/science-data/food-nutrient-databases/afcd" target="_blank" style="color:#4A9EA6;">Australian Food Composition Database (FSANZ)</a>.</p>
-      </div>
-      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="rNotes" placeholder="Any notes about this recipe..."></textarea></div>
-      <div class="form-group">
-        <label class="form-label">Recipe photo (optional)</label>
-        <div class="recipe-photo-upload" id="photoUploadArea">
-          <div class="recipe-photo-placeholder" id="photoPlaceholder">
-            <span>📷</span>
-            <p>Tap to add a photo</p>
-          </div>
-          <img id="photoPreview" src="" alt="" style="display:none;" />
-          <button class="recipe-photo-remove" id="photoRemoveBtn" type="button">×</button>
+      <button class="add-flour-btn" id="moreOptionsBtn">More options ▾</button>
+      <div id="moreOptions" style="display:none;">
+        <div class="form-group"><label class="form-label">Starter hydration %</label><input class="form-input" type="number" id="rStarterHyd" placeholder="100" />
+          <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:6px;">Feed your starter equal flour and water? Leave this at 100. A protein % box also appears next to each flour above, straight off the bag (optional).</p>
         </div>
-        <input type="file" id="photoFileInput" accept="image/*" style="display:none;" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Cook Mode Steps</label>
-        <button class="gen-steps-btn" id="genStepsBtn">✨ Auto-generate steps from recipe</button>
-        <div class="steps-list" id="stepsList"></div>
-        <button class="add-step-btn" id="addStepBtn">+ Add a step</button>
+        <div class="form-group">
+          <label class="form-label">Add-ins (optional)</label>
+          <div class="inclusions-list" id="inclusionsList"></div>
+          <button class="add-inclusion-btn" id="addInclusionBtn">+ Add an add-in</button>
+          <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-top:10px;">Fruit, nuts, cheese, herbs, anything extra. By default add-ins are left out of the hydration %, which is how most recipes treat them. For syrupy add-ins like honey or maple syrup, tap "counts toward hydration" to include their water content. Water content values sourced from the <a href="https://www.foodstandards.gov.au/science-data/food-nutrient-databases/afcd" target="_blank" style="color:#4A9EA6;">Australian Food Composition Database (FSANZ)</a>.</p>
+        </div>
+        <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="rNotes" placeholder="Any notes about this recipe..."></textarea></div>
+        <div class="form-group">
+          <label class="form-label">Recipe photo (optional)</label>
+          <div class="recipe-photo-upload" id="photoUploadArea">
+            <div class="recipe-photo-placeholder" id="photoPlaceholder">
+              <span>📷</span>
+              <p>Tap to add a photo</p>
+            </div>
+            <img id="photoPreview" src="" alt="" style="display:none;" />
+            <button class="recipe-photo-remove" id="photoRemoveBtn" type="button">×</button>
+          </div>
+          <input type="file" id="photoFileInput" accept="image/*" style="display:none;" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bake day steps (optional)</label>
+          <p style="font-size:11px;color:#9a9590;font-weight:300;line-height:1.6;margin-bottom:8px;">Leave this empty and your step-by-step baking guide is built automatically when you save.</p>
+          <button class="gen-steps-btn" id="genStepsBtn">✨ Auto-generate steps from recipe</button>
+          <div class="steps-list" id="stepsList"></div>
+          <button class="add-step-btn" id="addStepBtn">+ Add a step</button>
+        </div>
       </div>
       <button class="btn-primary" id="saveRecipeBtn">Save recipe</button>
       <button class="btn-secondary" id="closeRecipeModalBottom">Cancel</button>
@@ -732,7 +725,6 @@
     const FREE_LIMIT = 3;
     let currentDetailId = null;
     let editingRecipeId = null;
-    let loaves = 1;
 
     // Storage helpers
     function getRecipes() { try { var rs = JSON.parse(localStorage.getItem('hb_recipes') || '[]'); rs.forEach(function(r) { if (r.photo && String(r.photo).indexOf('data:') !== 0) r.photo = null; }); return rs; } catch(e) { return []; } }
@@ -810,6 +802,15 @@
     }
 
     document.getElementById('addStepBtn').addEventListener('click', function() { addStepRow(); });
+
+    function setRecipeFormAdvanced(show) {
+      document.getElementById('moreOptions').style.display = show ? 'block' : 'none';
+      document.getElementById('moreOptionsBtn').textContent = show ? 'Hide options ▴' : 'More options ▾';
+      document.querySelector('#recipeModal .modal').classList.toggle('show-advanced', show);
+    }
+    document.getElementById('moreOptionsBtn').addEventListener('click', function() {
+      setRecipeFormAdvanced(document.getElementById('moreOptions').style.display === 'none');
+    });
 
     // ── PHOTO UPLOAD ─────────────────────────────────────────────
     const photoUploadArea = document.getElementById('photoUploadArea');
@@ -1295,7 +1296,6 @@
       document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
       document.getElementById('screen-' + name).classList.add('active');
       if (name === 'home') renderHome();
-      if (name === 'scale') refreshScaleSelect();
       if (name === 'recipes') renderRecipes();
       if (name === 'bulk') refreshBulkSelect();
       if (name !== 'home') trackEvent('tab_viewed', { tab_name: name });
@@ -1380,10 +1380,11 @@
       document.getElementById('recipeModalTitle').textContent = 'New recipe';
       document.getElementById('rName').value = '';
       initFlourBlend(null);
-      document.getElementById('rWater').value = '';
-      document.getElementById('rStarter').value = '';
+      document.getElementById('rWater').value = '375';
+      document.getElementById('rStarter').value = '100';
       document.getElementById('rStarterHyd').value = '100';
-      document.getElementById('rSalt').value = '';
+      document.getElementById('rSalt').value = '10';
+      setRecipeFormAdvanced(false);
       document.getElementById('rNotes').value = '';
       document.getElementById('inclusionsList').innerHTML = '';
       document.getElementById('stepsList').innerHTML = '';
@@ -1415,33 +1416,9 @@
       detailPhoto.src = r.photo || DEFAULT_RECIPE_PHOTO;
       detailPhoto.style.display = 'block';
 
-      // Build flour blend display
-      const flourRows = (r.flourBlend && r.flourBlend.length)
-        ? r.flourBlend.map(function(f) {
-            const pn = f.protein ? ' <span style="font-size:10px;color:#4A9EA6;">(' + f.protein + '% protein)</span>' : '';
-            return '<div class="ingredient-row"><div class="ingredient-name">' + f.name + pn + '</div><div class="ingredient-val">' + f.qty + ' g</div></div>';
-          }).join('') +
-          (r.flourBlend.length > 1 ? '<div class="ingredient-row" style="opacity:0.6;"><div class="ingredient-name">Total flour</div><div class="ingredient-val">' + (r.flour || 0) + ' g</div></div>' : '')
-        : '<div class="ingredient-row"><div class="ingredient-name">Flour</div><div class="ingredient-val">' + (r.flour || 0) + ' g</div></div>';
-
-      document.getElementById('detailIngredients').innerHTML =
-        flourRows +
-        '<div class="ingredient-row"><div class="ingredient-name">Water</div><div class="ingredient-val">' + (r.water || 0) + ' g</div></div>' +
-        '<div class="ingredient-row"><div class="ingredient-name">Starter</div><div class="ingredient-val">' + (r.starter || 0) + ' g</div></div>' +
-        '<div class="ingredient-row"><div class="ingredient-name">Salt</div><div class="ingredient-val">' + (r.salt || 0) + ' g</div></div>';
-
-      const inclSection = document.getElementById('detailInclusionsSection');
-      if (r.inclusions && r.inclusions.length > 0) {
-        inclSection.style.display = 'block';
-        document.getElementById('detailInclusions').innerHTML = r.inclusions.map(function(inc) {
-          const wetNote = inc.isWet && inc.waterPct > 0
-            ? ' <span style="font-size:10px;color:#4A9EA6;">(' + inc.waterPct + '% water)</span>'
-            : '';
-          return '<div class="ingredient-row"><div class="ingredient-name">' + inc.name + wetNote + '</div><div class="ingredient-val">' + inc.qty + ' g</div></div>';
-        }).join('');
-      } else {
-        inclSection.style.display = 'none';
-      }
+      detailLoaves = 1;
+      document.getElementById('detailLoafCount').textContent = '1';
+      renderDetailIngredients(r);
 
       const notesSection = document.getElementById('detailNotesSection');
       if (r.notes && r.notes.trim()) {
@@ -1455,6 +1432,45 @@
       document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
       document.getElementById('screen-recipe-detail').classList.add('active');
     }
+
+    let detailLoaves = 1;
+    function renderDetailIngredients(r) {
+      const m = detailLoaves;
+      const flourRows = (r.flourBlend && r.flourBlend.length)
+        ? r.flourBlend.map(function(f) {
+            const pn = f.protein ? ' <span style="font-size:10px;color:#4A9EA6;">(' + f.protein + '% protein)</span>' : '';
+            return '<div class="ingredient-row"><div class="ingredient-name">' + f.name + pn + '</div><div class="ingredient-val">' + Math.round(f.qty * m) + ' g</div></div>';
+          }).join('') +
+          (r.flourBlend.length > 1 ? '<div class="ingredient-row" style="opacity:0.6;"><div class="ingredient-name">Total flour</div><div class="ingredient-val">' + Math.round((r.flour || 0) * m) + ' g</div></div>' : '')
+        : '<div class="ingredient-row"><div class="ingredient-name">Flour</div><div class="ingredient-val">' + Math.round((r.flour || 0) * m) + ' g</div></div>';
+
+      document.getElementById('detailIngredients').innerHTML =
+        flourRows +
+        '<div class="ingredient-row"><div class="ingredient-name">Water</div><div class="ingredient-val">' + Math.round((r.water || 0) * m) + ' g</div></div>' +
+        '<div class="ingredient-row"><div class="ingredient-name">Starter</div><div class="ingredient-val">' + Math.round((r.starter || 0) * m) + ' g</div></div>' +
+        '<div class="ingredient-row"><div class="ingredient-name">Salt</div><div class="ingredient-val">' + Math.round((r.salt || 0) * m) + ' g</div></div>';
+
+      const inclSection = document.getElementById('detailInclusionsSection');
+      if (r.inclusions && r.inclusions.length > 0) {
+        inclSection.style.display = 'block';
+        document.getElementById('detailInclusions').innerHTML = r.inclusions.map(function(inc) {
+          const wetNote = inc.isWet && inc.waterPct > 0
+            ? ' <span style="font-size:10px;color:#4A9EA6;">(' + inc.waterPct + '% water)</span>'
+            : '';
+          return '<div class="ingredient-row"><div class="ingredient-name">' + inc.name + wetNote + '</div><div class="ingredient-val">' + Math.round(inc.qty * m) + ' g</div></div>';
+        }).join('');
+      } else {
+        inclSection.style.display = 'none';
+      }
+    }
+    function detailLoafChange(delta) {
+      detailLoaves = Math.max(1, detailLoaves + delta);
+      document.getElementById('detailLoafCount').textContent = detailLoaves;
+      const r = getRecipes().find(function(x) { return x.id === currentDetailId; });
+      if (r) renderDetailIngredients(r);
+    }
+    document.getElementById('detailLoafMinus').addEventListener('click', function() { detailLoafChange(-1); });
+    document.getElementById('detailLoafPlus').addEventListener('click', function() { detailLoafChange(1); });
 
     function renderDetailJournal(recipeId) {
       const entries = getJournal().filter(function(j) { return j.recipeId === recipeId; });
@@ -1494,6 +1510,7 @@
       const placeholder = document.getElementById('photoPlaceholder');
       if (r.photo) { preview.src = r.photo; preview.style.display = 'block'; placeholder.style.display = 'none'; }
       else { preview.src = ''; preview.style.display = 'none'; placeholder.style.display = 'flex'; }
+      setRecipeFormAdvanced(true);
       document.getElementById('recipeModal').classList.add('open');
     });
 
@@ -1503,7 +1520,6 @@
       setRecipes(getRecipes().filter(function(r) { return r.id !== currentDetailId; }));
       setJournal(getJournal().filter(function(j) { return j.recipeId !== currentDetailId; }));
       goScreen('recipes');
-      refreshScaleSelect();
     });
 
     // SAVE RECIPE
@@ -1528,6 +1544,7 @@
         steps: getStepsFromForm(),
         photo: (function() { var s = document.getElementById('photoPreview').getAttribute('src'); return (s && s.indexOf('data:') === 0) ? s : null; })()
       };
+      if (!recipe.steps.length) recipe.steps = generateSteps(recipe);
       const recipes = getRecipes();
       if (editingRecipeId) {
         const idx = recipes.findIndex(function(r) { return r.id === editingRecipeId; });
@@ -1539,7 +1556,6 @@
       }
       setRecipes(recipes);
       document.getElementById('recipeModal').classList.remove('open');
-      refreshScaleSelect();
       if (editingRecipeId) {
         openDetail(recipe.id);
       } else {
@@ -1693,7 +1709,7 @@
       if (blend && blend.length) {
         blend.forEach(function(f) { addFlourRow(f.name, f.qty, f.protein); });
       } else {
-        addFlourRow('Bread flour', '');
+        addFlourRow('Bread flour', 500);
       }
     }
 
@@ -1709,16 +1725,20 @@
       const tf = flour + sf;
       const tw = water + sw;
       const dw = tf + tw + salt;
+      const calcResultEl = document.querySelector('#screen-calculator .calc-result');
+      const calcStatsEl = document.querySelector('#screen-calculator .calc-stats');
       if (tf > 0) {
+        document.getElementById('calcEmpty').style.display = 'none';
+        calcResultEl.style.display = '';
+        calcStatsEl.style.display = '';
         document.getElementById('calcPct').textContent = Math.round((tw / tf) * 100) + '%';
         document.getElementById('calcTotalFlour').textContent = Math.round(tf) + ' g';
         document.getElementById('calcTotalWater').textContent = Math.round(tw) + ' g';
         document.getElementById('calcDoughWeight').textContent = Math.round(dw) + ' g';
       } else {
-        document.getElementById('calcPct').textContent = '–';
-        document.getElementById('calcTotalFlour').textContent = '– g';
-        document.getElementById('calcTotalWater').textContent = '– g';
-        document.getElementById('calcDoughWeight').textContent = '– g';
+        document.getElementById('calcEmpty').style.display = '';
+        calcResultEl.style.display = 'none';
+        calcStatsEl.style.display = 'none';
       }
     }
     ['cFlour','cWater','cStarter','cStarterHyd','cSalt'].forEach(function(id) {
@@ -1740,65 +1760,6 @@
         calcUpdate();
       });
     });
-
-    // SCALE
-    function refreshScaleSelect() {
-      const sel = document.getElementById('scaleSelect');
-      const current = sel.value;
-      sel.innerHTML = '<option value="">Select a recipe</option>';
-      getRecipes().forEach(function(r) {
-        sel.innerHTML += '<option value="' + r.id + '">' + r.name + '</option>';
-      });
-      if (current) sel.value = current;
-      scaleUpdate();
-    }
-    document.getElementById('scaleSelect').addEventListener('change', scaleUpdate);
-    document.getElementById('loafMinus').addEventListener('click', function() { loaves = Math.max(1, loaves - 1); document.getElementById('loafCount').textContent = loaves; scaleUpdate(); });
-    document.getElementById('loafPlus').addEventListener('click', function() { loaves++; document.getElementById('loafCount').textContent = loaves; scaleUpdate(); });
-    function scaleUpdate() {
-      const id = document.getElementById('scaleSelect').value;
-      const results = document.getElementById('scaleResults');
-      if (!id) { results.innerHTML = '<div class="scale-empty">Select a recipe above to scale it up</div>'; return; }
-      const r = getRecipes().find(function(x) { return x.id === id; });
-      if (!r) return;
-      const m = loaves;
-      const sh = (r.starterHyd || 100) / 100;
-      const sf = (r.starter || 0) / (1 + sh);
-      const sw = (r.starter || 0) - sf;
-      const tf = (r.flour || 0) + sf;
-      const wetWater = (r.inclusions || []).reduce(function(sum, inc) {
-        return inc.isWet && inc.waterPct > 0 ? sum + ((inc.qty || 0) * inc.waterPct / 100) : sum;
-      }, 0);
-      const tw = (r.water || 0) + sw + wetWater;
-      const hyd = tf ? Math.round((tw / tf) * 100) : 0;
-
-      // Flour blend rows
-      let html = '';
-      if (r.flourBlend && r.flourBlend.length) {
-        r.flourBlend.forEach(function(f) {
-          const pn = f.protein ? ' <span style="font-size:10px;color:#4A9EA6;">(' + f.protein + '% protein)</span>' : '';
-          html += '<div class="scale-row-item"><div class="scale-row-name">' + f.name + pn + '</div><div class="scale-row-val">' + Math.round(f.qty * m) + ' g</div></div>';
-        });
-        if (r.flourBlend.length > 1) {
-          html += '<div class="scale-row-item" style="opacity:0.6;"><div class="scale-row-name">Total flour</div><div class="scale-row-val">' + Math.round((r.flour || 0) * m) + ' g</div></div>';
-        }
-      } else {
-        html += '<div class="scale-row-item"><div class="scale-row-name">Flour</div><div class="scale-row-val">' + Math.round((r.flour || 0) * m) + ' g</div></div>';
-      }
-      html += [
-        ['Water', Math.round(r.water * m)],
-        ['Starter', Math.round((r.starter || 0) * m)],
-        ['Salt', Math.round((r.salt || 0) * m)]
-      ].map(function(item) {
-        return '<div class="scale-row-item"><div class="scale-row-name">' + item[0] + '</div><div class="scale-row-val">' + item[1] + ' g</div></div>';
-      }).join('');
-      (r.inclusions || []).forEach(function(inc) {
-        const wetNote = inc.isWet && inc.waterPct > 0 ? ' <span style="font-size:10px;color:#4A9EA6;">(' + inc.waterPct + '% water)</span>' : '';
-        html += '<div class="scale-row-item"><div class="scale-row-name">' + inc.name + wetNote + '</div><div class="scale-row-val">' + Math.round(inc.qty * m) + ' g</div></div>';
-      });
-      html += '<div class="scale-row-item" style="background:#e8f4f5;border-color:rgba(74,158,166,0.3);"><div class="scale-row-name" style="color:#4A9EA6;">Hydration</div><div class="scale-row-val" style="color:#4A9EA6;">' + hyd + '%</div></div>';
-      results.innerHTML = html;
-    }
 
     // LOG BAKE
     let journalForId = null;
@@ -2240,7 +2201,7 @@
 
     // INIT
     renderRecipes();
-    refreshScaleSelect();
+    calcUpdate();
     refreshBulkSelect();
     restoreBulkSession();
     renderHome();
