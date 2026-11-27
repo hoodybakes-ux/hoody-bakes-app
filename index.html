@@ -417,6 +417,7 @@
       <div class="section-divider">Bake history</div>
       <div id="detailJournal"></div>
       <button class="btn-primary" id="startCookModeBtn" style="margin-top:0.5rem; background:#1C1C1A; display:flex; align-items:center; justify-content:center; gap:8px;">🍞 Start Cook Mode</button>
+      <button class="btn-secondary" id="startOverBtn" style="display:none;">Start the bake from the beginning</button>
       <button class="btn-primary" id="logBakeBtn" style="margin-top:10px;">+ Log a bake</button>
       <button class="btn-secondary" id="trackBulkBtn">⏱ Track bulk ferment</button>
       <button class="btn-secondary" id="editRecipeBtn">Edit recipe</button>
@@ -610,6 +611,18 @@
   </div>
 
   <!-- LOG BAKE MODAL -->
+  <div class="modal-overlay" id="cookExitModal" style="z-index:120;">
+    <div class="modal" style="max-width:360px;">
+      <div class="modal-header">
+        <div class="modal-title">Leaving bake mode</div>
+        <button class="modal-close" id="cookExitModalClose">×</button>
+      </div>
+      <p style="font-size:14px;color:#7a7570;font-weight:300;line-height:1.7;margin-bottom:1.25rem;">Do you want to keep your place so you can pick up where you left off?</p>
+      <button class="btn-primary" id="cookExitKeepBtn">Keep my place</button>
+      <button class="btn-secondary" id="cookExitDiscardBtn">I am done, discard my progress</button>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="journalModal">
     <div class="modal">
       <div class="modal-header">
@@ -1055,6 +1068,24 @@
       document.getElementById('cookStepCounter').textContent = 'Step ' + (cookStepIndex + 1) + ' of ' + total;
       document.getElementById('cookStepTitle').textContent = step.title || '';
       document.getElementById('cookStepBody').textContent = step.body || '';
+      const oldBulkBtn = document.getElementById('cookBulkBtn');
+      if (oldBulkBtn) oldBulkBtn.remove();
+      if (/bulk/i.test(step.title || '')) {
+        const bulkBtn = document.createElement('button');
+        bulkBtn.id = 'cookBulkBtn';
+        bulkBtn.className = 'cook-timer-btn start';
+        bulkBtn.style.marginTop = '1rem';
+        bulkBtn.textContent = '⏱ Track this bulk ferment';
+        bulkBtn.onclick = function() {
+          saveCookSession();
+          closeCookMode();
+          goScreen('bulk');
+          const sel = document.getElementById('bulkRecipeSelect');
+          sel.value = cookRecipeId;
+          sel.dispatchEvent(new Event('change'));
+        };
+        document.getElementById('cookStepBody').insertAdjacentElement('afterend', bulkBtn);
+      }
       document.getElementById('cookProgressFill').style.width = pct + '%';
       document.getElementById('cookPrevBtn').disabled = cookStepIndex === 0;
       // Show checklist on first step only
@@ -1063,7 +1094,7 @@
       const isLast = cookStepIndex === total - 1;
       document.getElementById('cookNextBtn').textContent = isLast ? 'Finish 🎉' : 'Next Step →';
       document.getElementById('cookNextBtn').className = 'cook-btn-next' + (isLast ? ' finish' : '');
-      document.getElementById('cookNextBtn').onclick = isLast ? function() { clearCookSession(); closeCookMode(); openJournalModal(); } : function() { cookStepIndex++; renderCookStep(); };
+      document.getElementById('cookNextBtn').onclick = isLast ? function() { clearCookSession(); closeCookMode(); openJournalModal(cookRecipeId); } : function() { cookStepIndex++; renderCookStep(); };
       document.getElementById('cookPrevBtn').onclick = function() { cookStepIndex--; renderCookStep(); };
 
       // Timer
@@ -1256,9 +1287,25 @@
     }
 
     document.getElementById('cookExitBtn').addEventListener('click', function() {
-      saveCookSession();
+      document.getElementById('cookExitModal').classList.add('open');
+    });
+    function cookExitFinish() {
+      document.getElementById('cookExitModal').classList.remove('open');
       closeCookMode();
       if (currentDetailId) openDetail(currentDetailId);
+    }
+    document.getElementById('cookExitModalClose').addEventListener('click', function() {
+      document.getElementById('cookExitModal').classList.remove('open');
+    });
+    document.getElementById('cookExitKeepBtn').addEventListener('click', function() {
+      saveCookSession();
+      cookExitFinish();
+    });
+    document.getElementById('cookExitDiscardBtn').addEventListener('click', function() {
+      clearCookSession();
+      cookTimerEndAt = null;
+      cookTimerRemaining = 0;
+      cookExitFinish();
     });
 
     document.getElementById('trackBulkBtn').addEventListener('click', function() {
@@ -1269,6 +1316,12 @@
       sel.dispatchEvent(new Event('change'));
     });
 
+    document.getElementById('startOverBtn').addEventListener('click', function() {
+      if (!currentDetailId) return;
+      clearCookSession();
+      trackEvent('cook_mode_restarted');
+      openCookMode(currentDetailId);
+    });
     document.getElementById('startCookModeBtn').addEventListener('click', function() {
       if (currentDetailId) {
         const r = getRecipes().find(function(x) { return x.id === currentDetailId; });
@@ -1408,8 +1461,10 @@
       const cookSess = getCookSession();
       if (cookSess && cookSess.recipeId === id && r.steps && r.steps.length) {
         cookBtn.innerHTML = '🍞 Resume baking: Step ' + (Math.min(cookSess.stepIndex || 0, r.steps.length - 1) + 1) + ' of ' + r.steps.length;
+        document.getElementById('startOverBtn').style.display = 'block';
       } else {
         cookBtn.innerHTML = '🍞 Start Cook Mode';
+        document.getElementById('startOverBtn').style.display = 'none';
       }
       document.getElementById('detailHyd').textContent = hyd + '%';
       const detailPhoto = document.getElementById('detailPhoto');
@@ -2197,6 +2252,20 @@
         document.getElementById('samsungBanner').classList.remove('show');
         localStorage.setItem('hb_samsung_dismissed', '1');
       });
+    })();
+
+    // Refresh stale auto-generated guides (old template only; custom steps untouched)
+    (function() {
+      const rs = getRecipes();
+      let changed = false;
+      rs.forEach(function(r) {
+        const s = r.steps || [];
+        if (s.length === 16 && s[0].title === 'Feed your starter' && s[1].title === 'Autolyse' && s[2].title === 'Add starter' && s[3].title === 'Add salt') {
+          r.steps = generateSteps(r);
+          changed = true;
+        }
+      });
+      if (changed) setRecipes(rs);
     })();
 
     // INIT
