@@ -920,10 +920,12 @@
       container.querySelectorAll('.cook-check-item').forEach(function(el) {
         el.addEventListener('click', function() {
           el.classList.toggle('checked');
+          saveCookSession();
         });
       });
       document.getElementById('cookChecklistReset').onclick = function() {
         container.querySelectorAll('.cook-check-item').forEach(function(el) { el.classList.remove('checked'); });
+        saveCookSession();
       };
       document.getElementById('cookChecklist').style.display = items.length ? 'block' : 'none';
     }
@@ -941,16 +943,56 @@
     }
 
     let cookRecipeId = null;
+    let cookResumeEndAt = null;
+    let cookResumeRemaining = null;
+    const COOK_SESSION_KEY = 'hb_cook';
+    function getCookSession() {
+      try { return JSON.parse(localStorage.getItem(COOK_SESSION_KEY)); } catch (e) { return null; }
+    }
+    function saveCookSession() {
+      if (!cookRecipeId) return;
+      const checked = [];
+      document.querySelectorAll('#cookChecklistItems .cook-check-item').forEach(function(el, i) {
+        if (el.classList.contains('checked')) checked.push(i);
+      });
+      try {
+        localStorage.setItem(COOK_SESSION_KEY, JSON.stringify({
+          recipeId: cookRecipeId,
+          stepIndex: cookStepIndex,
+          timerEndAt: cookTimerRunning ? cookTimerEndAt : null,
+          timerRemaining: (!cookTimerRunning && cookTimerRemaining > 0) ? cookTimerRemaining : null,
+          checked: checked,
+          savedAt: Date.now()
+        }));
+      } catch (e) {}
+    }
+    function clearCookSession() {
+      try { localStorage.removeItem(COOK_SESSION_KEY); } catch (e) {}
+    }
     function openCookMode(recipeId) {
       const r = getRecipes().find(function(x) { return x.id === recipeId; });
       if (!r) return;
       cookRecipeId = recipeId;
       cookSteps = r.steps && r.steps.length ? r.steps : [];
       cookStepIndex = 0;
+      cookResumeEndAt = null;
+      cookResumeRemaining = null;
+      const sess = getCookSession();
+      const resuming = sess && sess.recipeId === recipeId && cookSteps.length > 0;
+      if (resuming) {
+        cookStepIndex = Math.min(sess.stepIndex || 0, cookSteps.length - 1);
+        if (sess.timerEndAt) cookResumeEndAt = sess.timerEndAt;
+        else if (sess.timerRemaining > 0) cookResumeRemaining = sess.timerRemaining;
+      }
       document.getElementById('cookRecipeName').textContent = r.name;
       document.getElementById('cookOverlay').classList.add('open');
       requestWakeLock();
       buildChecklist(r);
+      if (resuming && sess.checked && sess.checked.length) {
+        document.querySelectorAll('#cookChecklistItems .cook-check-item').forEach(function(el, i) {
+          if (sess.checked.indexOf(i) !== -1) el.classList.add('checked');
+        });
+      }
       renderCookStep();
     }
 
@@ -999,7 +1041,9 @@
         return;
       }
 
-      document.getElementById('cookEmptyState').style.display = 'none';
+      const emptyClear = document.getElementById('cookEmptyState');
+      emptyClear.style.display = 'none';
+      emptyClear.innerHTML = '';
       document.getElementById('cookStepCounter').style.display = '';
       document.getElementById('cookStepTitle').style.display = '';
       document.getElementById('cookStepBody').style.display = '';
@@ -1018,7 +1062,7 @@
       const isLast = cookStepIndex === total - 1;
       document.getElementById('cookNextBtn').textContent = isLast ? 'Finish 🎉' : 'Next Step →';
       document.getElementById('cookNextBtn').className = 'cook-btn-next' + (isLast ? ' finish' : '');
-      document.getElementById('cookNextBtn').onclick = isLast ? function() { closeCookMode(); openJournalModal(); } : function() { cookStepIndex++; renderCookStep(); };
+      document.getElementById('cookNextBtn').onclick = isLast ? function() { clearCookSession(); closeCookMode(); openJournalModal(); } : function() { cookStepIndex++; renderCookStep(); };
       document.getElementById('cookPrevBtn').onclick = function() { cookStepIndex--; renderCookStep(); };
 
       // Timer
@@ -1111,6 +1155,7 @@
         pauseBtn.className = 'cook-timer-btn pause';
         try { if (navigator.vibrate) navigator.vibrate([400, 200, 400, 200, 700]); } catch (e) {}
         cookBeep();
+        saveCookSession();
       }
       function cookTick() {
         if (!cookTimerEndAt) return;
@@ -1134,6 +1179,7 @@
         pauseBtn.className = 'cook-timer-btn start';
         clearInterval(cookTimerInterval);
         cookTimerInterval = setInterval(cookTick, 500);
+        saveCookSession();
       };
 
       // Pause/resume
@@ -1154,6 +1200,7 @@
           clearInterval(cookTimerInterval);
           cookTimerInterval = setInterval(cookTick, 500);
         }
+        saveCookSession();
       };
 
       // Reset
@@ -1171,7 +1218,34 @@
           const pillSecs = parseInt(pill.dataset.mins || 0) * 60;
           pill.classList.toggle('active', hasMins && pillSecs === cookTimerRemaining);
         });
+        saveCookSession();
       };
+
+      if (cookResumeEndAt) {
+        const rem = Math.ceil((cookResumeEndAt - Date.now()) / 1000);
+        idleEl.style.display = 'none';
+        runningEl.style.display = 'block';
+        if (rem > 0) {
+          cookTimerRemaining = rem;
+          cookTimerEndAt = cookResumeEndAt;
+          countdown.textContent = formatTime(rem);
+          countdown.className = 'cook-timer-display';
+          runLbl.textContent = 'rings at ' + cookRingClock(cookTimerEndAt) + ' while the app is open; set a phone alarm for long waits';
+          cookTimerRunning = true;
+          pauseBtn.textContent = 'Pause';
+          pauseBtn.className = 'cook-timer-btn start';
+          clearInterval(cookTimerInterval);
+          cookTimerInterval = setInterval(cookTick, 500);
+        } else {
+          cookTimerDone();
+        }
+        cookResumeEndAt = null;
+      } else if (cookResumeRemaining > 0) {
+        cookTimerRemaining = cookResumeRemaining;
+        display.textContent = formatTime(cookTimerRemaining);
+        cookResumeRemaining = null;
+      }
+      saveCookSession();
     }
 
     function formatTime(secs) {
@@ -1181,7 +1255,9 @@
     }
 
     document.getElementById('cookExitBtn').addEventListener('click', function() {
-      if (confirm('Exit cook mode?')) closeCookMode();
+      saveCookSession();
+      closeCookMode();
+      if (currentDetailId) openDetail(currentDetailId);
     });
 
     document.getElementById('trackBulkBtn').addEventListener('click', function() {
@@ -1327,6 +1403,13 @@
       currentDetailId = id;
       const hyd = calcHyd(r);
       document.getElementById('detailName').textContent = r.name;
+      const cookBtn = document.getElementById('startCookModeBtn');
+      const cookSess = getCookSession();
+      if (cookSess && cookSess.recipeId === id && r.steps && r.steps.length) {
+        cookBtn.innerHTML = '🍞 Resume baking: Step ' + (Math.min(cookSess.stepIndex || 0, r.steps.length - 1) + 1) + ' of ' + r.steps.length;
+      } else {
+        cookBtn.innerHTML = '🍞 Start Cook Mode';
+      }
       document.getElementById('detailHyd').textContent = hyd + '%';
       const detailPhoto = document.getElementById('detailPhoto');
       detailPhoto.src = r.photo || DEFAULT_RECIPE_PHOTO;
